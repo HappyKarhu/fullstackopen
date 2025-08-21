@@ -23,7 +23,7 @@ flowchart TD
     E --> F[Selaimen GET https://studies.cs.helsinki.fi/exampleapp/main.css ja main.js]
     %% JS hakee datan palvelimelta -css ja js
     F --> G[Selaimen JavaScript hakee https://studies.cs.helsinki.fi/exampleapp/data.json]
-    G --> H[Palvelin palauttaa JSON (contains uuden muistiinpanon)]
+    G --> H[Palvelin palauttaa JSON -contains uuden muistiinpanon]
     %% Selain renderöi new-notes näytölle
     H --> I[Browser JavaScript renders the notes list to the screen]
 ```
