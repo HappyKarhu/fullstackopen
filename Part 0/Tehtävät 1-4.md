@@ -13,7 +13,7 @@ Valitsin **flowchart**-kaavion sekvenssikaavion sijaan, koska on helppo lukea. K
 
 ```mermaid
 flowchart TD
-    A[Käyttäjä kirjoittaa tekstin ja painaa "Tallenna"] --> B[Selaimen POST https://studies.cs.helsinki.fi/exampleapp/new_note]
+    A[Käyttäjä kirjoittaa tekstin ja painaa Tallenna] --> B[Selaimen POST https://studies.cs.helsinki.fi/exampleapp/new_note]
     %% Palvelin (server) vastaanottaa pyynnön ja tallentaa teksti (new-note)
     B --> C[Palvelin tallentaa muistiinpanon ja palauttaa 302 Redirect]
     %% Selain seuraa uudelleenohjausta
