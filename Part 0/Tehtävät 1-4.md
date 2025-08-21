@@ -12,18 +12,18 @@ luettu
 Valitsin **flowchart**-kaavion sekvenssikaavion sijaan, koska on helppo lukea. Kaaviossa näkyy kaikki olennaiset vaiheet.
 
 ```mermaid
-flowchart TD
-    A[User kirjoittaa tekstin ja painaa Tallenna] --> B[Selaimen POST https://studies.cs.helsinki.fi/exampleapp/new_note]
+flowchart TD;
+    A[User kirjoittaa tekstin ja painaa Tallenna] --> B[Selaimen POST https://studies.cs.helsinki.fi/exampleapp/new_note];
     %% Palvelin - server vastaanottaa pyynnön ja tallentaa teksti -new note
-    B --> C[Palvelin tallentaa muistiinpanon ja palauttaa 302 Redirect]
+    B --> C[Palvelin tallentaa muistiinpanon ja palauttaa 302 Redirect];
     %% Selain -browser seuraa uudelleenohjausta
-    C --> D[Selaimen GET https://studies.cs.helsinki.fi/exampleapp/notes]
-    D --> E[Server sends HTML-sivun]
+    C --> D[Selaimen GET https://studies.cs.helsinki.fi/exampleapp/notes];
+    D --> E[Server sends HTML-sivun];
     %% Hakee myös tyylit ja skriptit
-    E --> F[Selaimen GET https://studies.cs.helsinki.fi/exampleapp/main.css ja main.js]
+    E --> F[Selaimen GET https://studies.cs.helsinki.fi/exampleapp/main.css ja main.js];
     %% JS hakee datan palvelimelta -css ja js
-    F --> G[Selaimen JavaScript hakee https://studies.cs.helsinki.fi/exampleapp/data.json]
-    G --> H[Palvelin palauttaa JSON -contains uuden muistiinpanon]
+    F --> G[Selaimen JavaScript hakee https://studies.cs.helsinki.fi/exampleapp/data.json];
+    G --> H[Palvelin palauttaa JSON -contains uuden muistiinpanon];
     %% Selain renderöi new-notes näytölle
-    H --> I[Browser JavaScript renders the notes list to the screen]
+    H --> I[Browser JavaScript renders the notes list to the screen];
 ```
