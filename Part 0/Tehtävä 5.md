@@ -8,4 +8,4 @@ flowchart TD
     D --> E[User cliks button or menu];
     E --> F[SPA updates content, without reloadint the page];
     F --> G[User continues interaction. SPA handles routing internally];
-    ```
+```
