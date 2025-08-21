@@ -16,9 +16,9 @@ flowchart TD
     A[User kirjoittaa tekstin ja painaa Tallenna] --> B[Selaimen POST https://studies.cs.helsinki.fi/exampleapp/new_note]
     %% Palvelin (server) vastaanottaa pyynnön ja tallentaa teksti (new-note)
     B --> C[Palvelin tallentaa muistiinpanon ja palauttaa 302 Redirect]
-    %% Selain (BROWSER) seuraa uudelleenohjausta
+    %% Selain (browser) seuraa uudelleenohjausta
     C --> D[Selaimen GET https://studies.cs.helsinki.fi/exampleapp/notes]
-    D --> E[Palvelin(server) sends HTML-sivun]
+    D --> E[Server sends HTML-sivun]
     %% Hakee myös tyylit ja skriptit
     E --> F[Selaimen GET https://studies.cs.helsinki.fi/exampleapp/main.css ja main.js]
     %% JS hakee datan palvelimelta (css,js)
