@@ -18,13 +18,16 @@ const Statistics = ({good,neutral,bad}) => {
   return (
     <div>
       <h2>Palaute tilastot</h2>
-      <StatisticLine text= "Hyvä" value={good}/>
-      <StatisticLine text= "Neutraali" value={neutral}/>
-      <StatisticLine text= "Huono" value={bad}/>
-      <p><br></br></p>
-      <StatisticLine text= "Yhteensä" value={Kaikki}/>
-      <StatisticLine text= "Keskiarvo" value={keskiarvo}/>
-      <StatisticLine text= "Positiivista" value={prosenttiaPosiitivisaaPalautteista + "%"}/>
+
+      <table>
+        <tbody><StatisticLine text= "Hyvä" value={good}/></tbody>
+        <tbody><StatisticLine text= "Neutraali" value={neutral}/></tbody>
+        <tbody><StatisticLine text= "Huono" value={bad}/></tbody>
+        <p><br></br></p>
+        <tbody><StatisticLine text= "Yhteensä" value={Kaikki}/>
+        <StatisticLine text= "Keskiarvo" value={keskiarvo}/>
+        <StatisticLine text= "Positiivista" value={prosenttiaPosiitivisaaPalautteista + "%"}/></tbody>
+      </table>
     </div>
     )
   }
@@ -33,8 +36,13 @@ const Statistics = ({good,neutral,bad}) => {
 const Button = ({ onClick, text }) => 
   <button onClick={onClick}>{text}</button>
 
-const StatisticLine = ({ text, value }) => 
-  <p>{text} {value}</p>
+const StatisticLine = ({ text, value }) => (
+  <tr>
+    <td>{text}</td> 
+    <td>{value}</td>
+  </tr>
+)
+  
 
 const App = () => {
   // save clicks of each button to its own state
