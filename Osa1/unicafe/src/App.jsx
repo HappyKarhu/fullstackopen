@@ -7,8 +7,8 @@ const Statistics = ({good,neutral,bad}) => {
   if (Kaikki === 0) {
     return(
       <div>
-        <h2>statistics of feedbacks</h2>
-        <p>No Feedback given, yet.</p>
+        <h2>Palaute tilastot</h2>
+        <p>Palautetta ei ole vielä annettu.</p>
       </div>
     )
   } else if (Kaikki > 0) {
@@ -17,17 +17,24 @@ const Statistics = ({good,neutral,bad}) => {
   
   return (
     <div>
-      <h2>statistics of feedbacks</h2>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {Kaikki}</p>
-      <p>average {keskiarvo}</p>
-      <p>positive {prosenttiaPosiitivisaaPalautteista} %</p>
+      <h2>Palaute tilastot</h2>
+      <StatisticLine text= "Hyvä" value={good}/>
+      <StatisticLine text= "Neutraali" value={neutral}/>
+      <StatisticLine text= "Huono" value={bad}/>
+      <p><br></br></p>
+      <StatisticLine text= "Yhteensä" value={Kaikki}/>
+      <StatisticLine text= "Keskiarvo" value={keskiarvo}/>
+      <StatisticLine text= "Positiivista" value={prosenttiaPosiitivisaaPalautteista + "%"}/>
     </div>
     )
   }
 }
+
+const Button = ({ onClick, text }) => 
+  <button onClick={onClick}>{text}</button>
+
+const StatisticLine = ({ text, value }) => 
+  <p>{text} {value}</p>
 
 const App = () => {
   // save clicks of each button to its own state
@@ -44,13 +51,13 @@ const App = () => {
 
   return (
     <div>
-      <h1>give us feedback</h1>
-      <button onClick={() => handleFeedback('good')}>good</button>
-      <button onClick={() => handleFeedback('neutral')}>neutral</button>
-      <button onClick={() => handleFeedback('bad')}>bad</button>
+      <h1>Anna palautetta</h1>
+      <Button onClick={() => handleFeedback('good')} text= "Hyvä" />
+      <Button onClick={() => handleFeedback('neutral')}text= "Neutraali" />
+      <Button onClick={() => handleFeedback('bad')}text= "Huono" />
     
       <Statistics good={good} neutral={neutral} bad={bad} />
-
+      
     </div>
   )
 }
