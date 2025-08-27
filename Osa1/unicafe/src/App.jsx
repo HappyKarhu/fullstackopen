@@ -1,14 +1,32 @@
 import { useState } from 'react'
 
-const Statistics = (props) => {
+// statistics separetly
+const Statistics = ({good,neutral,bad}) => {
+  const Kaikki = good + neutral + bad
+
+  if (Kaikki === 0) {
+    return(
+      <div>
+        <h2>statistics of feedbacks</h2>
+        <p>No Feedback given, yet.</p>
+      </div>
+    )
+  } else if (Kaikki > 0) {
+    const keskiarvo = (good - bad) /Kaikki
+    const prosenttiaPosiitivisaaPalautteista =  (good / Kaikki) * 100
+  
   return (
     <div>
       <h2>statistics of feedbacks</h2>
-      <p>good {props.good}</p>
-      <p>neutral {props.neutral}</p>
-      <p>bad {props.bad}</p>
+      <p>good {good}</p>
+      <p>neutral {neutral}</p>
+      <p>bad {bad}</p>
+      <p>all {Kaikki}</p>
+      <p>average {keskiarvo}</p>
+      <p>positive {prosenttiaPosiitivisaaPalautteista} %</p>
     </div>
-  )
+    )
+  }
 }
 
 const App = () => {
@@ -24,12 +42,6 @@ const App = () => {
     else if (type === 'bad') setBad(bad + 1)
   }
 
-  
-  const yhteenlasketunMaara = good + neutral + bad
-  // keskiarvo - neutraali on 0
-  const keskiarvo = yhteenlasketunMaara === 0 ? 0 : (good - bad) / yhteenlasketunMaara
-  const prosenttiaPosiitivisaaPalautteista = yhteenlasketunMaara === 0 ? 0 : (good / yhteenlasketunMaara) * 100
-
   return (
     <div>
       <h1>give us feedback</h1>
@@ -38,10 +50,6 @@ const App = () => {
       <button onClick={() => handleFeedback('bad')}>bad</button>
     
       <Statistics good={good} neutral={neutral} bad={bad} />
-
-      <p>all {yhteenlasketunMaara}</p>
-      <p>average {keskiarvo}</p>
-      <p>positive {prosenttiaPosiitivisaaPalautteista}</p>
 
     </div>
   )
