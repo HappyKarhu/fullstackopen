@@ -4,6 +4,7 @@ import { useState } from 'react'
 const VoteButton =({onClick, votes}) => 
   <button onClick={onClick}>LIke it? Vote for it</button>
 
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -26,8 +27,15 @@ const App = () => {
     setVotes(copy);
   }
 
+  // create number array
+  const maxVote = Math.max(...votes)
+  //find max index
+  const maxIndex = votes.indexOf(maxVote)
+  
+
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       {anecdotes[selected]}
       <br />
       <br />
@@ -37,9 +45,13 @@ const App = () => {
       <button onClick={()=> 
         setSelected(Math.floor(Math.random() * anecdotes.length))}> Next Anecdote 
       </button>
-      <p>This anecdote has {votes[selected]} {votes[selected] === 1 ? 'vote' : 'votes'}.</p> 
+       <p>This anecdote has {votes[selected]} {votes[selected] === 1 ? 'vote' : 'votes'}.</p>
+      <br />
+      <h2>Anecdote with most votes is:</h2>
+      <p>{anecdotes[maxIndex]}</p>
+      <p>This winning anecdote has {maxVote} {maxVote === 1 ? 'vote' : 'votes'}.</p>
     </div>
-// if 1 is vote not votes
+// if 1 is vote not votes === 1 ? 'vote' : 'votes
   )
 }
 
