@@ -1,4 +1,4 @@
-import Course from './course'
+import Course from './components/course'
 
 const App = () => {
   const course = {
@@ -7,7 +7,7 @@ const App = () => {
     parts: [
       {
         name: 'Fundamentals of React',
-        exercises: 10,
+        exercises: 14,
         id: 1
       },
       {
@@ -17,12 +17,12 @@ const App = () => {
       },
       {
         name: 'State of a component',
-        exercises: 14,
+        exercises: 1,
         id: 3
       },
       {
         name: 'Node.js',
-        exercises: 10,
+        exercises: 0,
         id: 4
       }
     ]
