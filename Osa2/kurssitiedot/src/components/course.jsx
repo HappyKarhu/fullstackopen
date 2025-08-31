@@ -11,8 +11,8 @@ console.log(exercisesSuma);
     <div>
       <Header name={course.name} />
       <Content parts={course.parts} />
-      <br />
       <p><strong>Total of {exercisesSuma} {exercisesSuma === 1 ? 'exercise' : 'exercises'}.</strong></p>
+      <br />
     </div>
   )
 }
