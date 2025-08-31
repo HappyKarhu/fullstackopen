@@ -13,7 +13,6 @@ console.log(exercisesSuma);
       <Content parts={course.parts} />
       <br />
       <p><strong>Total of {exercisesSuma} {exercisesSuma === 1 ? 'exercise' : 'exercises'}.</strong></p>
-      
     </div>
   )
 }
