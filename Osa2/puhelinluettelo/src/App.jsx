@@ -14,12 +14,22 @@ const App = () => {
 
   const addContact = (event) => {
     event.preventDefault()       // prevent the default action of submitting HTML forms!-page refresh
+    
+    const newNameLowerCase = newName.toLowerCase() //converts into lowercase, ignores letter's size
+
+
+    const ifDuplicate = persons.some(person => person.name.toLowerCase() === newNameLowerCase)
+
+    if (ifDuplicate) { alert(`${newName} is already added to phonebook`)
+      return  //stops funct if duplicate
+  }
+
     const personObject = {
       name: newName
     }
 
     setPersons(persons.concat(personObject)) //add new person
-    setNewName('')
+    setNewName('') //clears output
   }
 
   return (
