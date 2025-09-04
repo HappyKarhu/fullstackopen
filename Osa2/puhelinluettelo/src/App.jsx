@@ -67,7 +67,7 @@ const App = () => {
 
     personService.create(personObject) //Extract the code that handles the communication with the backend into its own module
     .then(returnedPerson => {
-      setPersons(persons.concat(returnedPerson))
+      setPersons(persons.concat(returnedPerson.data))
       setNewName('')
       setNewNumber('')
     })
