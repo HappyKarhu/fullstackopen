@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import axios from 'axios'
 
 const FilterButton = ({filter, handleFilterInput}) => {
   return (
@@ -61,9 +62,13 @@ const App = () => {
       number: newNumber
     }
 
-    setPersons(persons.concat(personObject)) //add new person
-    setNewName('') //clears output
-    setNewNumber('')
+    axios
+    .post('http://localhost:3001/persons', personObject) //adds on server now
+    .then(response => {
+      setPersons(persons.concat(response.data))
+      setNewName('')
+      setNewNumber('')
+    })
   }
 
   const filterShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
