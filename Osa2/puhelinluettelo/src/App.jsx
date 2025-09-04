@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
@@ -18,21 +18,23 @@ const AddNewPerson = ({addContact, newName, handleNameInput, newNumber, handleNu
   </form>
 )
 
-const AllContactsList = ({persons}) => (
+const AllContactsList = ({persons, deletePerson}) => (
   <div>
       {persons.map((person) => (
-      <div key={person.name}>{person.name} {person.number}</div>
+      <div key={person.id}>{person.name} {person.number} {}
+      <button onClick={() => deletePerson(person.id, person.name)}>Delete contact</button>
+      </div>
       ))}
   </div>
 )
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ]) 
+  const [persons, setPersons] = useState([]) // empty array, persons is state variable, setPersons updates it
+  useEffect(() => {
+  personService.getAll().then(response => {
+    setPersons(response.data) // access the array here
+  })
+}, [])
   const [newName, setNewName] = useState('')  //nameinput
   const [newNumber, setNewNumber] = useState('') //number input
   const [filter, setFilter] = useState('')   //filter input
@@ -71,6 +73,14 @@ const App = () => {
     })
   }
 
+    const deletePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personService.remove(id).then(() => {
+        setPersons(persons.filter(person => person.id !== id))
+      })
+    }
+  }
+
   const filterShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
 
   return (
@@ -81,8 +91,8 @@ const App = () => {
       <AddNewPerson addContact={addContact} newName={newName} handleNameInput={handleNameInput} 
       newNumber={newNumber} handleNumberInput={handleNumberInput}/>
 
-      <h3>Numbers-Contacts</h3>
-      <AllContactsList persons={filterShow} />
+  <h3>Numbers-Contacts</h3>
+  <AllContactsList persons={filterShow} deletePerson={deletePerson} />
     </div>
   )
 }
