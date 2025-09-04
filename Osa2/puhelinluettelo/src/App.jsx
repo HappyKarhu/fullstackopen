@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import personService from './services/persons'
 
 const FilterButton = ({filter, handleFilterInput}) => {
   return (
@@ -62,10 +63,9 @@ const App = () => {
       number: newNumber
     }
 
-    axios
-    .post('http://localhost:3001/persons', personObject) //adds on server now
-    .then(response => {
-      setPersons(persons.concat(response.data))
+    personService.create(personObject) //Extract the code that handles the communication with the backend into its own module
+    .then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
     })
