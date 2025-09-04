@@ -32,7 +32,7 @@ const App = () => {
   const [persons, setPersons] = useState([]) // empty array, persons is state variable, setPersons updates it
   useEffect(() => {
   personService.getAll().then(response => {
-    setPersons(response.data) // access the array here
+    setPersons(response) // access the array here
   })
 }, [])
   const [newName, setNewName] = useState('')  //nameinput
@@ -54,10 +54,29 @@ const App = () => {
     
     const newNameLowerCase = newName.toLowerCase() //converts into lowercase, ignores letter's size
 
-    const ifDuplicate = persons.some(person => person.name.toLowerCase() === newNameLowerCase)
+    const existingContact = persons.find(person => person.name.toLowerCase() === newNameLowerCase)
+    
 
-    if (ifDuplicate) { alert(`${newName} is already added to phonebook`)
-      return  //stops funct if duplicate
+    if (existingContact) { if (window.confirm(
+      `${newName} is already added to phonebook, replace the old number with the new one?`
+    )) {
+      const updatedPerson = { ...existingContact, number: newNumber }
+
+      personService
+        .update(existingContact.id, updatedPerson)
+        .then(returnedPerson => {
+          setPersons(
+            persons.map(p => p.id !== existingContact.id ? p : returnedPerson)
+          )
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(error => {
+          alert(`Error updating ${newName}, maybe they were removed from server`)
+          setPersons(persons.filter(p => p.id !== existingContact.id))
+        })
+    }
+    return
   }
 
     const personObject = {
@@ -67,7 +86,7 @@ const App = () => {
 
     personService.create(personObject) //Extract the code that handles the communication with the backend into its own module
     .then(returnedPerson => {
-      setPersons(persons.concat(returnedPerson.data))
+      setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
     })
