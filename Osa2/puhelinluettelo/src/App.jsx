@@ -4,7 +4,7 @@ import personService from './services/persons'
 
 const Notification = ({ message, type }) => {
   if (message === null) return null
-return <div className="notification">{message}</div>
+return <div className={`notification ${type === 'fail' ? 'fail' : 'success'}`}>{message}</div>
 }
 
 const FilterButton = ({filter, handleFilterInput}) => {
@@ -45,7 +45,7 @@ const App = () => {
   const [filter, setFilter] = useState('')   //filter input
   const [notification, setNotification] = useState({ message: null, type: null })
 
-  const shownNotification = (message, type='Ok') => {
+  const shownNotification = (message, type='success') => {
     setNotification({ message, type })
     setTimeout(() => {
       setNotification({ message: null, type: null })
@@ -83,7 +83,7 @@ const App = () => {
           )
           setNewName('')
           setNewNumber('')
-          shownNotification(`Added ${returnedPerson.name}`, 'Ok')
+          shownNotification(`Added ${returnedPerson.name}`, 'success')
         })
         .catch(error => {
           alert(`Error updating ${newName}, maybe they were removed from server`)
@@ -112,8 +112,16 @@ const App = () => {
       personService.remove(id).then(() => {
         setPersons(persons.filter(person => person.id !== id))
       })
-    }
+    
+    .catch(error => {
+      shownNotification(
+        `Information of ${name} has already been removed from server`,
+        'fail'
+      )
+      setNotes(notes.filter(n => n.id !== id))
+    })
   }
+}
   
   const filterShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
 
