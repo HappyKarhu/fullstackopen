@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
 
+const Notification = ({ message, type }) => {
+  if (message === null) return null
+return <div className="notification">{message}</div>
+}
+
 const FilterButton = ({filter, handleFilterInput}) => {
   return (
     <div>Filter shown with <input value={filter} onChange={handleFilterInput} /></div>
@@ -38,6 +43,14 @@ const App = () => {
   const [newName, setNewName] = useState('')  //nameinput
   const [newNumber, setNewNumber] = useState('') //number input
   const [filter, setFilter] = useState('')   //filter input
+  const [notification, setNotification] = useState({ message: null, type: null })
+
+  const shownNotification = (message, type='Ok') => {
+    setNotification({ message, type })
+    setTimeout(() => {
+      setNotification({ message: null, type: null })
+    }, 6500)
+  }
 
   const handleNameInput = (event) => {
     setNewName(event.target.value)
@@ -70,6 +83,7 @@ const App = () => {
           )
           setNewName('')
           setNewNumber('')
+          shownNotification(`Added ${returnedPerson.name}`, 'Ok')
         })
         .catch(error => {
           alert(`Error updating ${newName}, maybe they were removed from server`)
@@ -89,6 +103,7 @@ const App = () => {
       setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
+      shownNotification(`Added ${returnedPerson.name}`)
     })
   }
 
@@ -99,14 +114,19 @@ const App = () => {
       })
     }
   }
-
+  
   const filterShow = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
 
   return (
     <div>
       <h2>Phonebook</h2>
+      
+      
       <FilterButton filter={filter} handleFilterInput={handleFilterInput} />
       <h3>Add a new person</h3>
+     
+      <Notification message={notification.message} type={notification.type} />
+       
       <AddNewPerson addContact={addContact} newName={newName} handleNameInput={handleNameInput} 
       newNumber={newNumber} handleNumberInput={handleNumberInput}/>
 
