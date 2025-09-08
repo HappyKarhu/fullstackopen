@@ -9,8 +9,17 @@ const persons = [
   { id: "4", name: "Mary Poppendieck", number: "39-23-6423122" }
 ]
 
-app.get('/api/persons', (req, res) => {
-  res.json(persons)
+app.get('/api/persons', (request, response) => {
+  response.json(persons)
+})
+
+app.get('/info', (request, response) => {
+  const currentTime = new Date()
+  response.send(`
+    <!-- <summa>  -->
+    <p>Phonebook has info for ${persons.length} people</p> 
+    <p>${currentTime}</p>
+  `)
 })
 
 const PORT = 3001
