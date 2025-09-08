@@ -1,0 +1,22 @@
+h2 {
+  color: rgb(5, 5, 5);
+}
+
+.notification {
+  padding: 10px;
+  font-size: 15px;
+  display: inline-block;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.success {
+  color: rgb(55, 121, 55);
+  background-color: #e2f4e2;
+  border: 3px solid rgb(55, 121, 55);
+}
+.fail {
+  color: rgb(180, 30, 30);
+  background-color: #f8d7da;
+  border: 3px solid rgb(180, 30, 30);
+}
