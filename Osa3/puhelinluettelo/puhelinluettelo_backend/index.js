@@ -1,7 +1,9 @@
 import express from 'express'
+import morgan from 'morgan'
 
 const app = express()
 app.use(express.json())
+app.use(morgan('tiny')) //predefined format string-it logs the method, URL, status, response time and content length
 
 let persons = [
   { id: "1", name: "Arto Hellas", number: "040-123456" },
