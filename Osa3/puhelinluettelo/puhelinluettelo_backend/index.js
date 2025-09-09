@@ -3,8 +3,8 @@ import morgan from 'morgan'
 
 const app = express()
 app.use(express.json())
-app.use(morgan('tiny')) //predefined format string-it logs the method, URL, status, response time and content length
 
+morgan.token('body', (req) => req.method === 'POST' ? JSON.stringify(req.body) : '')//body-tolken name, converts into string-if not post-return empty str
 let persons = [
   { id: "1", name: "Arto Hellas", number: "040-123456" },
   { id: "2", name: "Ada Lovelace", number: "39-44-5323523" },
@@ -12,9 +12,25 @@ let persons = [
   { id: "4", name: "Mary Poppendieck", number: "39-23-6423122" }
 ]
 
+
+//loggin
+const morganFormat = (tokens, req, res) => {
+  return [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length'), '-',
+    tokens['response-time'](req, res), 'ms',
+    tokens.body(req, res) 
+  ].join(' ')
+}
+
+
+app.use(morgan(morganFormat))
+
 //random func
 const getNewId = () => {
-  return Math.floor(Math.random() * 100000)
+  return Math.floor(Math.random() * 1000000)
 }
 
 app.get('/api/persons', (request, response) => {
@@ -73,7 +89,6 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  
   console.log(newPerson)
   persons.push(newPerson)
   response.json(newPerson)
