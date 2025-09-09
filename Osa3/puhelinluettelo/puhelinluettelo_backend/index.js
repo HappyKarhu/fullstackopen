@@ -1,6 +1,7 @@
 import express from 'express'
 
 const app = express()
+app.use(express.json())
 
 let persons = [
   { id: "1", name: "Arto Hellas", number: "040-123456" },
@@ -8,6 +9,10 @@ let persons = [
   { id: "3", name: "Dan Abramov", number: "12-43-234345" },
   { id: "4", name: "Mary Poppendieck", number: "39-23-6423122" }
 ]
+
+const getNewId = () => {
+  return Math.floor(Math.random() * 100000)
+}
 
 app.get('/api/persons', (request, response) => {
   response.json(persons)
@@ -38,6 +43,14 @@ app.delete('/api/persons/:id', (request, response) => {
   persons = persons.filter(person => person.id !== id)
 
   response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+  const newPerson = request.body
+  newPerson.id = getNewId()
+  console.log(newPerson)
+  persons.push(newPerson)
+  response.json(newPerson)
 })
 
 const PORT = 3001
