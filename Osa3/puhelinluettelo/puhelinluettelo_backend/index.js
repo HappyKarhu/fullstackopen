@@ -10,6 +10,7 @@ let persons = [
   { id: "4", name: "Mary Poppendieck", number: "39-23-6423122" }
 ]
 
+//random func
 const getNewId = () => {
   return Math.floor(Math.random() * 100000)
 }
@@ -18,6 +19,7 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
 
+//date
 app.get('/info', (request, response) => {
   const currentTime = new Date()
   response.send(`
@@ -46,8 +48,30 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-  const newPerson = request.body
-  newPerson.id = getNewId()
+  const body = request.body
+
+
+  //if number is missing
+  if (!body.number || !body.name) {
+    return response.status(400).json({ 
+      error: 'Number or name is missing' 
+    })
+  }
+  const newPerson = {
+    id: getNewId(),
+    name: body.name,
+    number: body.number
+  }
+
+  //if name exist 
+  const nameExists = persons.some(person => person.name === body.name)
+  if (nameExists) {
+    return response.status(400).json({ 
+      error: 'Name must be unique!' 
+    })
+  }
+
+  
   console.log(newPerson)
   persons.push(newPerson)
   response.json(newPerson)
