@@ -1,8 +1,12 @@
 import express from 'express'
 import morgan from 'morgan'
 
+
 const app = express()
 app.use(express.json())
+
+const cors = require('cors')
+app.use(cors())
 
 morgan.token('body', (req) => req.method === 'POST' ? JSON.stringify(req.body) : '')//body-tolken name, converts into string-if not post-return empty str
 let persons = [
@@ -33,6 +37,7 @@ const getNewId = () => {
   return Math.floor(Math.random() * 1000000)
 }
 
+//return ALL persons
 app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
@@ -47,6 +52,7 @@ app.get('/info', (request, response) => {
   `)
 })
 
+//gets one person by id
 app.get('/api/persons/:id', (request, response) => {
   const id = request.params.id
   const person = persons.find(person => person.id === id)
