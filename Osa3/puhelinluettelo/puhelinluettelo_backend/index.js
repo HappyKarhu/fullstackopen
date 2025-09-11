@@ -36,6 +36,11 @@ const getNewId = () => {
   return Math.floor(Math.random() * 1000000)
 }
 
+app.get('/', (req, res) => {
+  res.send('<h1>Backend test Render</h1>')
+})
+
+
 //return ALL persons
 app.get('/api/persons', (request, response) => {
   response.json(persons)
