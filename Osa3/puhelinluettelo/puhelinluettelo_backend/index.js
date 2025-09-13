@@ -1,11 +1,13 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const mongoose = require('mongoose')
+const Person = require('./person')
 
 const app = express()
-app.use(express.json())
+app.use(express.json()) //lets express to read JSON
 
-app.use(cors())
+app.use(cors()) //alows frontent running on another domain to call API
 
 morgan.token('body', (req) => req.method === 'POST' ? JSON.stringify(req.body) : '')//body-tolken name, converts into string-if not post-return empty str
 let persons = [
