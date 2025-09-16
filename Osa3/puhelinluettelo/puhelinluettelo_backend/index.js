@@ -1,10 +1,9 @@
 require('dotenv').config()
 
-const Person = require('./models/person')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-
+const Person = require('./models/person')
 const app = express()
 app.use(express.json()) //lets express to read JSON
 
@@ -14,7 +13,7 @@ morgan.token('body', (req) => req.method === 'POST' ? JSON.stringify(req.body) :
 
 
 //loggin
-const morganFormat = (tokens, req, res) => {
+/*const morganFormat = (tokens, req, res) => {
   return [
     tokens.method(req, res),
     tokens.url(req, res),
@@ -35,7 +34,7 @@ const getNewId = () => {
 
 app.get('/', (req, res) => {
   res.send('<h1>Backend test Render</h1>')
-})
+})*/
 
 
 //get ALL persons-fetch 3.13
@@ -45,7 +44,7 @@ app.get('/api/persons', (request, response) => {
   })
 })
 
-//date
+/*//date
 app.get('/info', (request, response) => {
   const currentTime = new Date()
   Person.countDocuments({}).then(count => {
@@ -54,26 +53,29 @@ app.get('/info', (request, response) => {
       <p>${currentTime}</p>
     `)
   })
-})
+})*/
 
 //gets one person by id
-/*app.get('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  const person = persons.find(person => person.id === id)
-
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
-  persons = persons.filter(person => person.id !== id)
-
-  response.status(204).end()
-})*/
+  Person.findByIdAndDelete(id)
+    .then(() => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
+})
 
 //numbers saved to DB-3.14
 app.post('/api/persons', (request, response) => {
@@ -105,7 +107,7 @@ app.post('/api/persons', (request, response) => {
   
 const PORT = process.env.PORT || 3001
 
-const path = require('path');
+/*const path = require('path');
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'dist')));
@@ -113,7 +115,18 @@ if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
   });
+}*/
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
 }
+app.use(errorHandler)
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
