@@ -78,7 +78,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 //numbers saved to DB-3.14
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   //if number is missing
@@ -92,18 +92,13 @@ app.post('/api/persons', (request, response) => {
     name: body.name,
     number: body.number
   })
-  // save to database
+  // save to database-it forward to error handler
   person.save()
-    .then(savedPerson => {
-      response.json(savedPerson)
-    })
-    .catch(error => {
-      response.status(400).json({ error: 'Name must be unique!'
-        
-       })
-    })
+  .then(savedPerson => {
+    response.json(savedPerson)
+  })
+  .catch(error => next(error))
 })
-
   
 const PORT = process.env.PORT || 3001
 
@@ -124,6 +119,9 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: 'malformatted id' })
   }
 
+  if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
   next(error)
 }
 app.use(errorHandler)
