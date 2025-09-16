@@ -1,8 +1,9 @@
+require('dotenv').config()
+
+const Person = require('./models/person')
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
-const Person = require('./person')
 
 const app = express()
 app.use(express.json()) //lets express to read JSON
@@ -10,12 +11,6 @@ app.use(express.json()) //lets express to read JSON
 app.use(cors()) //alows frontent running on another domain to call API
 
 morgan.token('body', (req) => req.method === 'POST' ? JSON.stringify(req.body) : '')//body-tolken name, converts into string-if not post-return empty str
-let persons = [
-  { id: "1", name: "Arto Hellas", number: "040-123456" },
-  { id: "2", name: "Ada Lovelace", number: "39-44-5323523" },
-  { id: "3", name: "Dan Abramov", number: "12-43-234345" },
-  { id: "4", name: "Mary Poppendieck", number: "39-23-6423122" }
-]
 
 
 //loggin
@@ -43,23 +38,26 @@ app.get('/', (req, res) => {
 })
 
 
-//return ALL persons
+//get ALL persons-fetch 3.13
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 //date
 app.get('/info', (request, response) => {
   const currentTime = new Date()
-  response.send(`
-    <!-- <summa>  -->
-    <p>Phonebook has info for ${persons.length} people</p> 
-    <p>${currentTime}</p>
-  `)
+  Person.countDocuments({}).then(count => {
+    res.send(`
+      <p>Phonebook has info for ${count} people</p>
+      <p>${currentTime}</p>
+    `)
+  })
 })
 
 //gets one person by id
-app.get('/api/persons/:id', (request, response) => {
+/*app.get('/api/persons/:id', (request, response) => {
   const id = request.params.id
   const person = persons.find(person => person.id === id)
 
@@ -75,11 +73,11 @@ app.delete('/api/persons/:id', (request, response) => {
   persons = persons.filter(person => person.id !== id)
 
   response.status(204).end()
-})
+})*/
 
+//numbers saved to DB-3.14
 app.post('/api/persons', (request, response) => {
   const body = request.body
-
 
   //if number is missing
   if (!body.number || !body.name) {
@@ -87,25 +85,24 @@ app.post('/api/persons', (request, response) => {
       error: 'Number or name is missing' 
     })
   }
-  const newPerson = {
-    id: getNewId(),
+  //create new person 
+  const person = new Person({
     name: body.name,
     number: body.number
-  }
-
-  //if name exist 
-  const nameExists = persons.some(person => person.name === body.name)
-  if (nameExists) {
-    return response.status(400).json({ 
-      error: 'Name must be unique!' 
+  })
+  // save to database
+  person.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
     })
-  }
-
-  console.log(newPerson)
-  persons.push(newPerson)
-  response.json(newPerson)
+    .catch(error => {
+      response.status(400).json({ error: 'Name must be unique!'
+        
+       })
+    })
 })
 
+  
 const PORT = process.env.PORT || 3001
 
 const path = require('path');
