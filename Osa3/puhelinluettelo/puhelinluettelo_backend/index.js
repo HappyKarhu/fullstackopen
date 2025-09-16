@@ -99,7 +99,25 @@ app.post('/api/persons', (request, response, next) => {
   })
   .catch(error => next(error))
 })
-  
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const { number } = request.body
+  Person.findByIdAndUpdate(
+    request.params.id, //the Id of the person to update
+    { number },
+    { new: true, runValidators: true }
+  )
+  .then(updatedPerson => {
+    if (updatedPerson) {
+      response.json(updatedPerson)
+    } else {
+      response.status(404).end()
+    }
+  })
+  .catch(error => next(error))
+})
+
+
 const PORT = process.env.PORT || 3001
 
 /*const path = require('path');
