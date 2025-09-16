@@ -117,6 +117,17 @@ app.put('/api/persons/:id', (request, response, next) => {
   .catch(error => next(error))
 })
 
+app.get('/info', (request, response, next) => {
+  const currentTime = new Date()
+  Person.countDocuments({})
+    .then(count => {
+      response.send(`
+        <p>Phonebook has info for ${count} people</p>
+        <p>${currentTime}</p>
+      `)
+    })
+    .catch(error => next(error))
+})
 
 const PORT = process.env.PORT || 3001
 
