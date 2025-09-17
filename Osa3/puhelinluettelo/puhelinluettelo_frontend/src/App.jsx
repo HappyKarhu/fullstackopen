@@ -86,8 +86,8 @@ const App = () => {
           shownNotification(`Added ${returnedPerson.name}`, 'success')
         })
         .catch(error => {
-          alert(`Error updating ${newName}, maybe they were removed from server`)
-          setPersons(persons.filter(p => p.id !== existingContact.id))
+          const errorMessage = error.response?.data?.error || error.message || 'Something went wrong'
+          shownNotification(errorMessage, 'fail')
         })
     }
     return
@@ -105,6 +105,10 @@ const App = () => {
       setNewNumber('')
       shownNotification(`Added ${returnedPerson.name}`)
     })
+    .catch(error => {
+    const errorMessage = error.response?.data?.error || error.message || 'Something went wrong'
+    shownNotification(errorMessage, 'fail')
+  })
   }
 
     const deletePerson = (id, name) => {
