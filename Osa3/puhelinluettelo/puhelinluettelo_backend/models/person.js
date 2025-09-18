@@ -19,7 +19,7 @@ const personSchema = new mongoose.Schema({
     validate: {
       validator: function(v) {
         // Must be 8+ chars and two parts separated by a single '-'
-        return /^\d{2,3}-\d+$/.test(v) && v.replace('-', '').length >= 8;
+        return /^\d{2,3}-\d+$/.test(v) && v.replace('-', '').length >= 8
       },
       message: props => `${props.value} is not a valid phone number!`
     }

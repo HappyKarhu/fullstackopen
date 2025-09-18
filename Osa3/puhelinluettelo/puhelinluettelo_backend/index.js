@@ -20,7 +20,7 @@ morgan.token('body', (req) => req.method === 'POST' ? JSON.stringify(req.body) :
     tokens.status(req, res),
     tokens.res(req, res, 'content-length'), '-',
     tokens['response-time'](req, res), 'ms',
-    tokens.body(req, res) 
+    tokens.body(req, res)
   ].join(' ')
 }
 
@@ -81,17 +81,17 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
-  //create new person 
+  //create new person
   const person = new Person({
     name: body.name,
     number: body.number
   })
   // save to database-it forward to error handler
   person.save()
-  .then(savedPerson => {
-    response.json(savedPerson)
-  })
-  .catch(error => next(error))
+    .then(savedPerson => {
+      response.json(savedPerson)
+    })
+    .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
@@ -99,16 +99,16 @@ app.put('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndUpdate(
     request.params.id, //the Id of the person to update
     { number },
-    { new: true, runValidators: true, context: 'query'}
+    { new: true, runValidators: true, context: 'query' }
   )
-  .then(updatedPerson => {
-    if (updatedPerson) {
-      response.json(updatedPerson)
-    } else {
-      response.status(404).end()
-    }
-  })
-  .catch(error => next(error))
+    .then(updatedPerson => {
+      if (updatedPerson) {
+        response.json(updatedPerson)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.get('/info', (request, response, next) => {
@@ -125,14 +125,14 @@ app.get('/info', (request, response, next) => {
 
 const PORT = process.env.PORT || 3001
 
-const path = require('path');
+const path = require('path')
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'dist')));
+  app.use(express.static(path.join(__dirname, 'dist')))
 
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
-  });
+    res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
+  })
 }
 
 const errorHandler = (error, request, response, next) => {

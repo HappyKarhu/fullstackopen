@@ -22,7 +22,7 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-if (!name) { 
+if (!name) {
   Person.find({}).then(result => {
     console.log('phonebook:')
     result.forEach(person => {
@@ -38,11 +38,11 @@ if (name && number) {
     number: number
   })
 
-person.save().then(result => {
-  console.log(`Added ${result.name} number ${result.number} to phonebook`)
-  mongoose.connection.close()
-}) //closing correctly
+  person.save().then(result => {
+    console.log(`Added ${result.name} number ${result.number} to phonebook`)
+    mongoose.connection.close()
+  }) //closing correctly
 }
 //node mongo.js yourpassword Anna 040-1234556
 //node mongo.js yourpassword "Arto Vihavainen" 045-1232456
-//node mongo.js yourpassword  
+//node mongo.js yourpassword
