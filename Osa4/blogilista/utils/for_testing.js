@@ -1,19 +1,9 @@
-const reverse = (string) => {
-  return string
-    .split('')
-    .reverse()
-    .join('')
-}
+const reverse = (string) => string.split('').reverse().join('')
 
-const average = (array) => {
-  const reducer = (sum, item) => sum + item
-
-  return array.length === 0
-    ? 0
-    : array.reduce(reducer, 0) / array.length
-}
+const average = (array) => 
+  array.length === 0 ? 0 : array.reduce((sum, item) => sum + item, 0) / array.length
 
 module.exports = {
   reverse,
-  average,
+  average
 }
