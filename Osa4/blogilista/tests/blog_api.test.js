@@ -59,12 +59,12 @@ await api  //add new blog
   assert.ok(titles.includes('Blog 3'))
 })
 
+//that if the likes property is missing from the request, it will default to the value 0
 test('missing likes property defaults to 0', async () => {
   const newBlog = {
     title: 'Blog without likes',
     author: 'Author 4',
     url: 'http://example.com/4'
-    // likes is intentionally missing
   }
 
   const response = await api
@@ -73,9 +73,41 @@ test('missing likes property defaults to 0', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  // Verify likes default to 0
   assert.strictEqual(response.body.likes, 0)
 })
+
+test('blog without title is not added', async () => {
+  const newBlog = {
+    author: 'Author 5',
+    url: 'http://example.com/5',
+    likes: 4
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400) 
+
+  const blogsAtEnd = await Blog.find({})
+  assert.strictEqual(blogsAtEnd.length, initialBlogs.length) // only previous valid blogs are there
+})
+
+test('blog without url is not added', async () => {
+  const newBlog = {
+    title: 'Blog without url',
+    author: 'Author 6',
+    likes: 10
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400) 
+
+  const blogsAtEnd = await Blog.find({})
+  assert.strictEqual(blogsAtEnd.length, initialBlogs.length) // still only previous valid blogs
+})
+
 
 after(async () => { //closing DB
   await mongoose.connection.close()

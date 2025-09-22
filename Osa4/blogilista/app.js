@@ -16,6 +16,11 @@ app.get('/api/blogs', async (req, res) => {
 })
 
 app.post('/api/blogs', async (req, res) => {
+  const { title, url } = req.body
+  if (!title || !url) { //missing title check
+    return res.status(400).json({ error: 'title or url missing' })
+  }
+
   const blog = new Blog(req.body)
   const savedBlog = await blog.save()
   res.status(201).json(savedBlog)
