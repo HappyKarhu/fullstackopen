@@ -42,4 +42,25 @@ app.delete('/api/blogs/:id', async (req, res) => { //delete blog
   } 
 })
 
+app.put('/api/blogs/:id', async (req, res) => {
+  const id = req.params.id;
+  const { likes } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'invalid id' });
+  }
+
+  const updatedBlog = await Blog.findByIdAndUpdate(
+    id,
+    { likes },            // fields to update
+    { new: true, runValidators: true, context: 'query' } // return updated doc
+  );
+
+  if (updatedBlog) {
+    res.json(updatedBlog);
+  } else {
+    res.status(404).end(); // blog not found
+  }
+});
+
 module.exports = app
