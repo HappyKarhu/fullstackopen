@@ -10,12 +10,12 @@ mongoose.connect(config.MONGODB_URI)
 
 app.use(express.json())
 
-app.get('/api/blogs', async (req, res) => {
+app.get('/api/blogs', async (req, res) => {//get new blog
   const blogs = await Blog.find({})
   res.json(blogs)
 })
 
-app.post('/api/blogs', async (req, res) => {
+app.post('/api/blogs', async (req, res) => {//post new blog
   const { title, url } = req.body
   if (!title || !url) { //missing title check
     return res.status(400).json({ error: 'title or url missing' })
@@ -24,6 +24,22 @@ app.post('/api/blogs', async (req, res) => {
   const blog = new Blog(req.body)
   const savedBlog = await blog.save()
   res.status(201).json(savedBlog)
+})
+
+app.delete('/api/blogs/:id', async (req, res) => { //delete blog
+  const id = req.params.id
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).end()//wrong id
+  }
+
+  const deletedBlog = await Blog.findByIdAndDelete(id)
+
+  if (deletedBlog) {
+    return res.status(204).end()//successfully deleted
+  } else {
+    return res.status(404).end()//blog doesnt exist
+  } 
 })
 
 module.exports = app
