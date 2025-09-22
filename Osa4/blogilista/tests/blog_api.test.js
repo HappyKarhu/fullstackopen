@@ -58,6 +58,25 @@ await api  //add new blog
   const titles = blogsAtEnd.map(b => b.title)
   assert.ok(titles.includes('Blog 3'))
 })
+
+test('missing likes property defaults to 0', async () => {
+  const newBlog = {
+    title: 'Blog without likes',
+    author: 'Author 4',
+    url: 'http://example.com/4'
+    // likes is intentionally missing
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  // Verify likes default to 0
+  assert.strictEqual(response.body.likes, 0)
+})
+
 after(async () => { //closing DB
   await mongoose.connection.close()
 })
