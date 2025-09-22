@@ -28,6 +28,16 @@ test('blogs are returned as json', async () => {
     .expect('Content-Type', /application\/json/) //Checking the value of the header-if string the value of the header must be exactly the same
 })
 
+test('unique identifier property of blogs is named id', async () => {
+  const response = await api.get('/api/blogs')
+  const blogs = response.body
+
+  for (const blog of blogs) {
+    assert.ok(blog.id, 'id property is missing')
+    assert.strictEqual(blog._id, undefined)
+  }
+})
+
 after(async () => { //closing DB
   await mongoose.connection.close()
 })
