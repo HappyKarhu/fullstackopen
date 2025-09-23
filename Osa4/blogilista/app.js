@@ -3,12 +3,16 @@ const mongoose = require('mongoose')
 const Blog = require('./models/blog')
 const config = require('./utils/config')
 const app = express()
+const User = require('./models/user')
+const usersRouter = require('./controllers/user')
 
 mongoose.connect(config.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err.message))
 
 app.use(express.json())
+
+app.use('/api/users', usersRouter)
 
 app.get('/api/blogs', async (req, res) => {//get new blog
   const blogs = await Blog.find({})
