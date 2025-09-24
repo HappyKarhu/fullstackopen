@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose') //This-all allows Mongoose to populate the user info when fetching blogs
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -11,9 +11,22 @@ const blogSchema = new mongoose.Schema({
 blogSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
+    return {
+      url: returnedObject.url,
+      title: returnedObject.title,
+      author: returnedObject.author,
+      user: returnedObject.user
+        ? {
+          username: returnedObject.user.username,
+          name: returnedObject.user.name,
+          id: returnedObject.user.id
+          }
+        : null,//when missing user
+        likes: returnedObject.likes,
+      id: returnedObject._id.toString()
+    }
   }
 })
+
 
 module.exports = mongoose.model('Blog', blogSchema)

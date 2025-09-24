@@ -5,6 +5,8 @@ const supertest = require('supertest')
 const app = require('../app') //express app
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const bcrypt = require('bcrypt')
+let userId
 
 const api = supertest(app)
 
@@ -13,11 +15,18 @@ const initialBlogs = [ //testing blogs
   { title: 'Second Blog', author: 'Author 2', url: 'http://example.com/2', likes: 12 }
 ]
 
-describe('when there are initially some blogs saved', () => {
-  beforeEach(async () => {
-    await Blog.deleteMany({})
-    await Blog.insertMany(initialBlogs)
-  })
+beforeEach(async () => {
+  await Blog.deleteMany({})
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash('sekret', 10)
+  const user = new User({ username: 'root', name: 'Superuser', passwordHash })
+  const savedUser = await user.save()
+  userId = savedUser._id
+
+  const blogObjects = initialBlogs.map(blog => new Blog({ ...blog, user: userId }))
+  const promiseArray = blogObjects.map(blog => blog.save())
+  await Promise.all(promiseArray)
+})
 
 test('blogs are returned as json', async () => {
     await api
@@ -39,7 +48,8 @@ test('a valid blog can be added', async () => {
     title: 'Blog 3',
     author: 'Author 3',
     url: 'http://example.com/3',
-    likes: 7
+    likes: 7,
+    userId
   }
 
 await api.post('/api/blogs')
@@ -59,7 +69,8 @@ test('missing likes property defaults to 0', async () => {
   const newBlog = {
     title: 'Blog without likes',
     author: 'Author 4',
-    url: 'http://example.com/4'
+    url: 'http://example.com/4',
+    userId
   }
 
   const response = await api
@@ -131,7 +142,6 @@ test('fails with status code 400 if id is invalid', async () => {
       await api.delete('/api/blogs/invalidid123').expect(400)
     })
   })
-})
 
 after(async () => { //closing DB
   await mongoose.connection.close()
