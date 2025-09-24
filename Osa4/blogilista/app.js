@@ -67,4 +67,9 @@ app.put('/api/blogs/:id', async (req, res) => {
   }
 });
 
+const middleware = require('./utils/middleware')
+
+app.use(middleware.unknownEndpoint)
+app.use(middleware.errorHandler)
+
 module.exports = app
