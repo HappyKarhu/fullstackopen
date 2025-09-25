@@ -11,7 +11,15 @@ const userSchema = new mongoose.Schema({
     }
   ]
 })
+const jwt = require('jsonwebtoken')
 
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
 userSchema.set('toJSON', {
   transform: (doc, ret) => {
     ret.id = ret._id.toString()
