@@ -35,23 +35,25 @@ const decodedToken = jwt.verify(request.token, process.env.SECRET)
   response.status(201).json(populatedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {//deletes blog by ID
-  const id = request.params.id
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return response.status(400).end()
+blogsRouter.delete('/:id', async (request, response) => {//verifies token, fetches by id, delte if matches
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
   }
-
-  const deletedBlog = await Blog.findByIdAndDelete(id)
-
-  if (deletedBlog) {
-    return response.status(204).end()
-  } else {
+  const blog = await Blog.findById(request.params.id)
+  if (!blog) {
     return response.status(404).end()
   }
+
+  if (blog.user.toString() !== decodedToken.id.toString()) {
+    return response.status(403).json({ error: 'permission denied' })
+  }
+
+  await Blog.findByIdAndDelete(request.params.id)
+  response.status(204).end()
 })
 
-blogsRouter.put('/:id', async (request, response) => {//updates likes for a blog
+blogsRouter.put('/:id', async (request, response) => {
   const id = request.params.id
   const { likes } = request.body
 
