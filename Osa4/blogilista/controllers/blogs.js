@@ -4,13 +4,6 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -18,9 +11,8 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const body = request.body
-
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    const body = request.body
+const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
@@ -43,7 +35,7 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(populatedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', async (request, response) => {//deletes blog by ID
   const id = request.params.id
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -59,7 +51,7 @@ blogsRouter.delete('/:id', async (request, response) => {
   }
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', async (request, response) => {//updates likes for a blog
   const id = request.params.id
   const { likes } = request.body
 
