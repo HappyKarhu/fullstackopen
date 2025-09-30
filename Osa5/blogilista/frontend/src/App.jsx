@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from './components/notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,6 +12,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [notification, setNotification] = useState(null)
+  const [notificationType, setNotificationType] = useState('success')
 
 
   const addBlog = async (event) => {//event is better because is a form submission
@@ -26,6 +29,9 @@ const App = () => {
     setTitle('')
     setAuthor('')
     setUrl('')
+    setNotification(`A new blog ${createdBlog.title} by ${createdBlog.author} added`)
+    setNotificationType('success')
+    setTimeout(() => { setNotification(null) }, 8000)
   }
 
   useEffect(() => {
@@ -45,6 +51,7 @@ const App = () => {
 
   const handleLogin = async event => {
     event.preventDefault()
+    try {
     const loggedUser = await loginService.login({ username, password })
     window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(loggedUser)
@@ -52,17 +59,27 @@ const App = () => {
   setUser(loggedUser)
   setUsername('')
   setPassword('')
+  blogService.setToken(loggedUser.token)
+} 
+catch (error) {
+  setNotification('Wrong Username or Password - Please, try again')
+  setNotificationType('error')
+  setTimeout(()=>{ setNotification(null) }, 8000)
+}
+
 }
 
 const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
   }
+  
 
   if (user === null) { //if noone is logged in
     return (
       <div>
         <h2>Log in to application</h2>
+        <Notification message={notification} type={notificationType} />
         <form onSubmit={handleLogin}>
         <div>
           <label>
@@ -93,15 +110,14 @@ const handleLogout = () => {
   return (
     <div>
       <h2>Blogs</h2>
-      <p>{user.name} logged in.
-        <button onClick={handleLogout}>logout</button>
+      <Notification message={notification} type={notificationType}/>
+      <p>{user.name} logged in. <button onClick={handleLogout}>logout</button>
       </p>
-      <h2>Create new</h2>
+      <h2>Create new Blog</h2>
       <form onSubmit={addBlog}>
         <div>
           <label>
-            title:
-            <input
+            Title: <input
               type="text"
               value={title}
               onChange={({ target }) => setTitle(target.value)}
@@ -110,8 +126,7 @@ const handleLogout = () => {
         </div>
         <div>
           <label>
-            author:
-            <input
+            Author: <input
               type="text"
               value={author}
               onChange={({ target }) => setAuthor(target.value)}
@@ -120,24 +135,22 @@ const handleLogout = () => {
         </div>
         <div>
           <label>
-            url:
-            <input
+            url: <input
               type="text"
               value={url}
               onChange={({ target }) => setUrl(target.value)}
             />
           </label>
         </div>
-        <button type="submit">CREATE</button>
+        <br></br><button type="submit">CREATE</button>
       </form>
       <br />
-      <ul>
+    
       {blogs.map(blog =>
-        <li key={blog.id}>
-          <strong>Blog's title:</strong> {blog.title} <strong>Blogger:</strong> {blog.author}
+        <li key={blog.id}> 
+        <strong>Blog's title: </strong> {blog.title} &nbsp;-&nbsp;<strong>Blogger: </strong> {blog.author}
         </li>
       )}
-      </ul>
   </div>
   )
 }
