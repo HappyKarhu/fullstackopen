@@ -25,7 +25,6 @@ const App = () => {
     })
 }
 
-
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
@@ -112,10 +111,8 @@ const handleLogout = () => {
       <br />
     
       {blogs.map(blog =>
-        <li key={blog.id}> 
-        <strong>Blog's title: </strong> {blog.title} &nbsp;-&nbsp;<strong>Blogger: </strong> {blog.author}
-        </li>
-      )}
+  <Blog key={blog.id} blog={blog} />
+)}
   </div>
   )
 }
