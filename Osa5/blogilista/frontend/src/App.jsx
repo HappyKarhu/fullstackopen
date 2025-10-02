@@ -65,6 +65,12 @@ const handleLogout = () => {
     setUser(null)
   }
   
+const updateBlogInState = (returnedBlog) => {
+  setBlogs(blogs.map(blog => blog.id == returnedBlog.id ? returnedBlog : blog))
+}
+{blogs.map(blog =>
+  <Blog key={blog.id} blog={blog} updateBlog={updateBlogInState} />
+)}
 
   if (user === null) { //if noone is logged in
     return (
@@ -111,7 +117,7 @@ const handleLogout = () => {
       <br />
     
       {blogs.map(blog =>
-  <Blog key={blog.id} blog={blog} />
+  <Blog key={blog.id} blog={blog} updateBlog={updateBlogInState} />
 )}
   </div>
   )

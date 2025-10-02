@@ -46,17 +46,19 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
 
 blogsRouter.put('/:id', async (request, response) => {
   const id = request.params.id
-  const { likes } = request.body
+  const { title, likes, author, url, user } = request.body
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return response.status(400).json({ error: 'invalid id' })
   }
 
+  const blog ={title, author, url, likes, user}
+
   const updatedBlog = await Blog.findByIdAndUpdate(
     id,
-    { likes },
+    blog,
     { new: true, runValidators: true, context: 'query' }
-  )
+  ).populate('user', { username: 1, name: 1 })
 
   if (updatedBlog) {
     response.json(updatedBlog)

@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import myBlogs from '../services/blogs'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateBlog }) => {
   const [visible, setVisible] = useState(false)//details not shown, only title&author
   const [backgroundCOlor, setBackgroundCOlor] =useState('white')
   const blogStyle = {
@@ -17,6 +18,25 @@ const Blog = ({ blog }) => {
     setBackgroundCOlor (visible ? 'yellow' : '#5226ccff')
   }//true, url,likes &author is visible
 
+  const handleLike = async () => {
+    if (!blog.id) {
+      console.error('Id is missing, cannot like it')
+      return
+    }
+    const updateBlogData = {
+    user: blog.user ? (typeof blog.user === 'string' ? blog.user : blog.user.id) : null,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+  }
+  try {
+    const returnedBlog = await myBlogs.updateBlog(blog.id, updateBlogData)
+    updateBlog(returnedBlog)
+  } catch (error) {
+      console.error('Failed to like blog:', error.response?.data || error.message)
+    }
+  }
   return (
     <div style={blogStyle}>
       <div>
@@ -29,7 +49,8 @@ const Blog = ({ blog }) => {
     <div> 
     <div>{blog.url}</div>
     <div>
-      likes {blog.likes} <button>like</button></div>
+      likes {blog.likes} <button onClick={handleLike}>like</button>
+      </div>
     <div>{blog.author}</div>
     </div>
   )}
