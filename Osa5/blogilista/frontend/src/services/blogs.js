@@ -2,7 +2,7 @@ import axios from 'axios'
 const baseUrl = '/api/blogs'
 
 let token = null
- 
+
 const setToken = newToken => {
   token = `bearer ${newToken}`
 }
@@ -21,11 +21,11 @@ const createBlog = async newBlog => {
 }
 
 const updateBlog = async(Id, updatedBlog) => {const config = {
-    headers: { Authorization: token }
-  }
-  const response = await axios.put(`${baseUrl}/${Id}`, updatedBlog, config)
-  return response.data; 
-  }
+  headers: { Authorization: token }
+}
+const response = await axios.put(`${baseUrl}/${Id}`, updatedBlog, config)
+return response.data
+}
 
 const deleteBlog = async(Id) => {
   const config = {

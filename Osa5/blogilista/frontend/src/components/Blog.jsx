@@ -24,16 +24,16 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
       return
     }
     const updateBlogData = {
-    user: blog.user ? (typeof blog.user === 'string' ? blog.user : blog.user.id) : null,
+      user: blog.user ? (typeof blog.user === 'string' ? blog.user : blog.user.id) : null,
       likes: blog.likes + 1,
       author: blog.author,
       title: blog.title,
       url: blog.url
-  }
-  try {
-    const returnedBlog = await myBlogs.updateBlog(blog.id, updateBlogData)
-    updateBlog(returnedBlog)
-  } catch (error) {
+    }
+    try {
+      const returnedBlog = await myBlogs.updateBlog(blog.id, updateBlogData)
+      updateBlog(returnedBlog)
+    } catch (error) {
       console.error('Failed to like blog:', error.response?.data || error.message)
     }
   }
@@ -43,20 +43,20 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
         {blog.title} {blog.author}
         <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
       </div>
-      
-  
-  {visible && (
-    <div> 
-    <div>{blog.url}</div>
-    <div>
+
+
+      {visible && (
+        <div>
+          <div>{blog.url}</div>
+          <div>
       likes {blog.likes} <button onClick={handleLike}>like</button>
-      </div>
-    <div>{blog.author}</div>
-    <div><button onClick={() => deleteBlog(blog.id, blog.title, blog.author)}>delete</button></div>
+          </div>
+          <div>{blog.author}</div>
+          <div><button onClick={() => deleteBlog(blog.id, blog.title, blog.author)}>delete</button></div>
+        </div>
+      )}
     </div>
-  )}
-  </div>
-)
+  )
 }
 
 export default Blog
