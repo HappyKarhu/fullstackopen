@@ -68,7 +68,7 @@ const handleLogout = () => {
 const updateBlogInState = (returnedBlog) => {
   setBlogs(blogs.map(blog => blog.id == returnedBlog.id ? returnedBlog : blog))
 }
-{blogs.map(blog =>
+{blogs.toSorted((a, b) => b.likes - a.likes).map(blog =>
   <Blog key={blog.id} blog={blog} updateBlog={updateBlogInState} />
 )}
 
@@ -116,7 +116,7 @@ const updateBlogInState = (returnedBlog) => {
     </Togglable>
       <br />
     
-      {blogs.map(blog =>
+      {blogs.toSorted((a, b) => b.likes - a.likes).map(blog =>
   <Blog key={blog.id} blog={blog} updateBlog={updateBlogInState} />
 )}
   </div>
