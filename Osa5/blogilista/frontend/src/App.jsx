@@ -72,6 +72,13 @@ const updateBlogInState = (returnedBlog) => {
   <Blog key={blog.id} blog={blog} updateBlog={updateBlogInState} />
 )}
 
+const handleDelete = async (Id, title, author) => {
+  if (window.confirm(`Remove blog: ${title} by ${author}?`)) {
+      await blogService.deleteBlog(Id)
+      setBlogs(blogs.filter(blog => blog.id !== Id))
+  }
+}
+
   if (user === null) { //if noone is logged in
     return (
       <div>
@@ -117,7 +124,7 @@ const updateBlogInState = (returnedBlog) => {
       <br />
     
       {blogs.toSorted((a, b) => b.likes - a.likes).map(blog =>
-  <Blog key={blog.id} blog={blog} updateBlog={updateBlogInState} />
+  <Blog key={blog.id} blog={blog} updateBlog={updateBlogInState} deleteBlog={handleDelete} />
 )}
   </div>
   )

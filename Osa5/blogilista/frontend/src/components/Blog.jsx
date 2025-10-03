@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import myBlogs from '../services/blogs'
 
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, updateBlog, deleteBlog }) => {
   const [visible, setVisible] = useState(false)//details not shown, only title&author
   const [backgroundCOlor, setBackgroundCOlor] =useState('white')
   const blogStyle = {
@@ -52,6 +52,7 @@ const Blog = ({ blog, updateBlog }) => {
       likes {blog.likes} <button onClick={handleLike}>like</button>
       </div>
     <div>{blog.author}</div>
+    <div><button onClick={() => deleteBlog(blog.id, blog.title, blog.author)}>delete</button></div>
     </div>
   )}
   </div>
