@@ -4,15 +4,26 @@
   "type": "module",
   "scripts": {
     "lint": "eslint frontend --ext .js,.jsx",
-    "lint:fix": "eslint frontend --ext .js,.jsx --fix"
+    "lint:fix": "eslint frontend --ext .js,.jsx --fix",
+    "test": "vitest run",
+    "cypress:open": "cypress open"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "cypress": "^15.3.0",
     "eslint": "^9.36.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^6.1.0",
     "eslint-plugin-react-refresh": "^0.4.23",
     "globals": "^16.4.0",
-    "typescript-eslint": "^8.45.0"
+    "jsdom": "^27.0.0",
+    "supertest": "^7.1.4",
+    "typescript-eslint": "^8.45.0",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "mongoose": "^8.19.0"
   }
 }
