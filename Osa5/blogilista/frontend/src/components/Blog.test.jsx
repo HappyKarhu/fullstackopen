@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { test, expect } from 'vitest'
 import Blog from './Blog'
 import userEvent from '@testing-library/user-event'
+import BlogForm from './createBlogForm'
 
 vi.mock('../services/blogs', () => ({
   default: {
@@ -67,4 +68,24 @@ test('calls updateBlog handler twice when like button is clicked twice', async (
   await user.click(likeButton)
   await user.click(likeButton)
   expect(updateBlog).toHaveBeenCalledTimes(2)
+})
+
+//test 5.16
+test('form calls the event handler it received as props with the right details when a new blog is created', async () => {
+  const createBlog = vi.fn()
+  render(<BlogForm createBlog={createBlog} />)
+  const user = userEvent.setup()
+
+  await user.type(screen.getByPlaceholderText('title'), 'Component testing is done with react-testing-library')
+  await user.type(screen.getByPlaceholderText('author'), 'Blogger1')
+  await user.type(screen.getByPlaceholderText('url'), 'https://example.com')
+
+  await user.click(screen.getByText('create'))
+
+  expect(createBlog).toHaveBeenCalledTimes(1)
+  expect(createBlog).toHaveBeenCalledWith({
+    title: 'Component testing is done with react-testing-library',
+    author: 'Blogger1',
+    url: 'https://example.com'
+  })
 })
