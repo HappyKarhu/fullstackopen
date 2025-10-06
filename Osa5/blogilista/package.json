@@ -6,12 +6,15 @@
     "lint": "eslint frontend --ext .js,.jsx",
     "lint:fix": "eslint frontend --ext .js,.jsx --fix",
     "test": "vitest run",
+    "cypress:open": "cypress open",
+    "start:test": "cross-env NODE_ENV=test node backend/index.js",
     "cypress:open": "cypress open"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
+    "cross-env": "^10.1.0",
     "cypress": "^15.3.0",
     "eslint": "^9.36.0",
     "eslint-plugin-react": "^7.37.5",
