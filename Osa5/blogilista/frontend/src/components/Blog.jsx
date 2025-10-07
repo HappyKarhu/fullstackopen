@@ -46,11 +46,13 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
 
       {visible && (
         <div>
-          <div>{blog.url}</div>
-          <div>
-      likes {blog.likes} <button onClick={handleLike}>like</button>
+          <div className="blog-details">
+            <div>{blog.url}</div>
+            <div>
+              likes {blog.likes} <button onClick={handleLike}>like</button>
+            </div>
+            <div>{blog.author}</div>
           </div>
-          <div>{blog.author}</div>
           <div><button onClick={() => deleteBlog(blog.id, blog.title, blog.author)}>delete</button></div>
         </div>
       )}

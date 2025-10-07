@@ -1,14 +1,12 @@
 {
   "name": "blogilista",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "lint": "eslint frontend --ext .js,.jsx",
     "lint:fix": "eslint frontend --ext .js,.jsx --fix",
     "test": "vitest run",
     "cypress:open": "cypress open",
-    "start:test": "cross-env NODE_ENV=test node backend/index.js",
-    "cypress:open": "cypress open"
+    "start:test": "cross-env NODE_ENV=test node backend/index.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

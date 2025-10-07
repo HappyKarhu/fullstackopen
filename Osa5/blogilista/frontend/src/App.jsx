@@ -89,6 +89,7 @@ const App = () => {
             <label>
             username
               <input
+              name="username"
                 type="text"
                 value={username}
                 onChange={({ target }) => setUsername(target.value)}
@@ -99,6 +100,7 @@ const App = () => {
             <label>
             password
               <input
+                name="password"
                 type="password"
                 value={password}
                 onChange={({ target }) => setPassword(target.value)}
