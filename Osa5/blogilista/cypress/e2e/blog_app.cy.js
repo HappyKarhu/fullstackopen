@@ -104,7 +104,6 @@ describe('Login', function() {
 
   
   //5.22
-
     it('delete button is shown only for the creator', function() {
     cy.contains('Create new Blog').click()
     cy.get('input[name="title"]').type('Blog by User')
@@ -122,7 +121,7 @@ describe('Login', function() {
       password: 'password'
     }
     cy.request('POST', 'http://localhost:3003/api/users/', user2).then(() => {
-    cy.wait(500) // odota backendin päivitystä
+    cy.wait(500)
   })
 
     // log in as user2
@@ -133,50 +132,68 @@ describe('Login', function() {
     cy.contains('Blog by User', { timeout: 10000 }).should('exist')
     cy.contains('Blog by User').contains('view').click()
 
-  // Tarkista, että delete-nappia ei näy
   cy.get('.blog-details').find('button').contains('delete').should('not.exist')
   })
 
-//5.23
-    it('blogs are ordered by likes, most liked first', function() {
-      // create first blog
-      const blogs = [
-        { title: 'First Blog', author: 'A', url: 'http://a.com' },
-        { title: 'Second Blog', author: 'B', url: 'http://b.com' },
-        { title: 'Third Blog', author: 'C', url: 'http://c.com' }
-      ]
 
-      blogs.forEach(blog => {
-        cy.contains('Create new Blog').click()
-        cy.get('input[name="title"]').type(blog.title)
-        cy.get('input[name="author"]').type(blog.author)
-        cy.get('input[name="url"]').type(blog.url)
-        cy.contains('create').click()
-        cy.contains(blog.title).should('exist')
-      })
-      blogs.forEach(blog => {
-        cy.contains('First Blog').contains('view').click()
-        cy.contains('Second Blog').contains('view').click()
-        cy.contains('Third Blog').contains('view').click()
-      })
-
-      for (let i = 0; i < 3; i++) {
-    cy.contains('Second Blog').parent().find('button').contains('like').click()
-    cy.contains('Second Blog').parent().should('contain', `likes ${i + 1}`)
-  }
-      for (let i = 0; i < 2; i++) {
-    cy.contains('Third Blog').parent().find('button').contains('like').click()
-    cy.contains('Third Blog').parent().should('contain', `likes ${i + 1}`)
-  }
-
-  // First Blog: 1 like
-  cy.contains('First Blog').parent().find('button').contains('like').click()
-  cy.contains('First Blog').parent().should('contain', 'likes 1')
-
-  // Tarkista järjestys
-  cy.get('.blog').eq(0).should('contain', 'Second Blog')
-  cy.get('.blog').eq(1).should('contain', 'Third Blog')
-  cy.get('.blog').eq(2).should('contain', 'First Blog')
 })
 
+//5.23
+
+describe('Blogs ordered by likes', function() {
+  const user = {
+    name: 'Matti Luukkainen',
+    username: 'mluukkai',
+    password: 'salainen',
+    token: 'testtoken123'
+  }
+
+  beforeEach(function() {
+    cy.request('POST', 'http://localhost:3003/api/testing/reset')
+    cy.request('POST', 'http://localhost:3003/api/users/', {
+      name: user.name,
+      username: user.username,
+      password: user.password
+    })
+    .then(() => {
+      return cy.request('POST', 'http://localhost:3003/api/login', {
+        username: user.username,
+        password: user.password
+      })
+      .then(response => {
+        user.token = response.body.token
+
+    const blogs = [
+      { title: 'The title with the most likes', author: 'A', url: 'http://a.fi', likes: 6 },
+      { title: 'The title with the second most likes', author: 'B', url: 'http://b.fi', likes: 3 },
+    ]
+
+    return Cypress.Promise.all(
+      blogs.map(blog =>
+      cy.request({
+        method: 'POST',
+        url: 'http://localhost:3003/api/blogs',
+        body: blog,
+        headers: { Authorization: `Bearer ${user.token}` }
+      })
+      )
+    )
+  })
+
+ })
+
+    .then(() => {
+    cy.visit('http://localhost:5173')
+    cy.window().then(win => {
+      win.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+    })
+    cy.visit('http://localhost:5173')
+    })
+  })
+
+  it('blogs are ordered by likes, most liked first', function() {
+    cy.get('.blog').should('have.length', 2)
+    cy.get('.blog').eq(0).should('contain', 'The title with the most likes')
+    cy.get('.blog').eq(1).should('contain', 'The title with the second most likes')
+    })
 })

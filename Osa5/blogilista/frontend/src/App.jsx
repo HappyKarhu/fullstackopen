@@ -128,7 +128,7 @@ const App = () => {
       <p>{user.name} logged in. <button onClick={handleLogout}>logout</button>
       </p>
 
-      <Togglable buttonLabel='Create new Blog'>
+      <Togglable buttonLabel='Create new Blog' data-cy="toggle-create-blog">
         <CreateBlogForm createBlog={addBlog} />
       </Togglable>
       <br />

@@ -38,7 +38,10 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
     }
   }
   return (
-    <div style={blogStyle}>
+    <div
+      className="blog"
+      data-cy="blog"
+      style={blogStyle}>
       <div className="blog-title-author">
         {blog.title} {blog.author}
         <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
@@ -53,7 +56,7 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
             </div>
             <div>{blog.author}</div>
           </div>
-          {user.username === blog.user.username && (
+          {blog.user && user.username === blog.user.username && (
   <button onClick={() => deleteBlog(blog.id, blog.title, blog.author)}>delete</button>
 )}
         </div>
