@@ -15,15 +15,18 @@ const App = () => {
   const [notificationType, setNotificationType] = useState('success')
 
 
-  const addBlog = (blogObject) => {
-    blogService.createBlog(blogObject)
-      .then(createdBlog => {
-        setBlogs(blogs.concat(createdBlog))
-        setNotification(`A new blog ${createdBlog.title} by ${createdBlog.author} added`)
-        setNotificationType('success')
-        setTimeout(() => setNotification(null), 8000)
-      })
+  const addBlog = async (blogObject) => {
+  try {
+    const createdBlog = await blogService.createBlog(blogObject)
+    createdBlog.user = { username: user.username, name: user.name, id: user.id }
+    setBlogs(blogs.concat(createdBlog))
+    setNotification(`A new blog ${createdBlog.title} by ${createdBlog.author} added`)
+    setNotificationType('success')
+    setTimeout(() => setNotification(null), 8000)
+  } catch (error) {
+    console.error(error)
   }
+}
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -68,16 +71,18 @@ const App = () => {
   const updateBlogInState = (returnedBlog) => {
     setBlogs(blogs.map(blog => blog.id === returnedBlog.id ? returnedBlog : blog))
   }
-  {blogs.toSorted((a, b) => b.likes - a.likes).map(blog =>
-    <Blog key={blog.id} blog={blog} updateBlog={updateBlogInState} />
-  )}
+  
 
   const handleDelete = async (Id, title, author) => {
     if (window.confirm(`Remove blog: ${title} by ${author}?`)) {
       await blogService.deleteBlog(Id)
-      setBlogs(blogs.filter(blog => blog.id !== Id))
+      setBlogs(prevBlogs => prevBlogs.filter(blog => blog.id !== Id))
+    setNotification(`Deleted blog ${title} by ${author}`)
+    setNotificationType('success')
+    setTimeout(() => setNotification(null), 8000)
     }
   }
+  
 
   if (user === null) { //if noone is logged in
     return (
@@ -125,10 +130,18 @@ const App = () => {
       </Togglable>
       <br />
 
+      <div className="blogs-list">
       {blogs.toSorted((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlogInState} deleteBlog={handleDelete} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          user={user}
+          updateBlog={updateBlogInState}
+          deleteBlog={handleDelete}
+        />
       )}
     </div>
-  )
+  </div>
+)
 }
 export default App
