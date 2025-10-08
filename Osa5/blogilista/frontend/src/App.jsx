@@ -29,10 +29,11 @@ const App = () => {
 }
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
-  }, [])
+    if (user) {
+      blogService.getAll().then(blogs => setBlogs(blogs))
+    }
+  }, [user])
+
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -66,6 +67,8 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
+    setBlogs([])
+    setNotification(null)
   }
 
   const updateBlogInState = (returnedBlog) => {

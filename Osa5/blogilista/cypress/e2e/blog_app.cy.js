@@ -111,7 +111,7 @@ describe('Login', function() {
     cy.get('input[name="author"]').type('Matti Luukkainen')
     cy.get('input[name="url"]').type('http://example.com')
     cy.contains('create').click()
-
+    cy.contains('Blog by User', { timeout: 10000 }).should('exist')
     // log out user-Matti
     cy.contains('logout').click()
 
@@ -121,18 +121,20 @@ describe('Login', function() {
       username: 'seconduser',
       password: 'password'
     }
-    cy.request('POST', 'http://localhost:3003/api/users/', user2)
+    cy.request('POST', 'http://localhost:3003/api/users/', user2).then(() => {
+    cy.wait(500) // odota backendin päivitystä
+  })
 
     // log in as user2
     cy.get('input[name="username"]').type('seconduser')
     cy.get('input[name="password"]').type('password')
     cy.get('#login-button').click()
 
-    cy.reload()
-
-    cy.contains('Blog by User', { timeout: 6000 }).should('exist')
+    cy.contains('Blog by User', { timeout: 10000 }).should('exist')
     cy.contains('Blog by User').contains('view').click()
-    cy.get('.blog-details').find('button').contains('delete').should('not.exist')
+
+  // Tarkista, että delete-nappia ei näy
+  cy.get('.blog-details').find('button').contains('delete').should('not.exist')
   })
 
 //5.23
@@ -145,32 +147,36 @@ describe('Login', function() {
       ]
 
       blogs.forEach(blog => {
-        cy.contains('Create new Blog').click({ force: true })
+        cy.contains('Create new Blog').click()
         cy.get('input[name="title"]').type(blog.title)
         cy.get('input[name="author"]').type(blog.author)
         cy.get('input[name="url"]').type(blog.url)
         cy.contains('create').click()
-        cy.wait(300)
+        cy.contains(blog.title).should('exist')
+      })
+      blogs.forEach(blog => {
+        cy.contains('First Blog').contains('view').click()
+        cy.contains('Second Blog').contains('view').click()
+        cy.contains('Third Blog').contains('view').click()
       })
 
-      cy.contains('First Blog').contains('view').click()
-      cy.contains('Second Blog').contains('view').click()
-      cy.contains('Third Blog').contains('view').click()
-
       for (let i = 0; i < 3; i++) {
-        cy.contains('Second Blog').parent().find('button').contains('like').click()
-        cy.wait(300)
-      }
+    cy.contains('Second Blog').parent().find('button').contains('like').click()
+    cy.contains('Second Blog').parent().should('contain', `likes ${i + 1}`)
+  }
       for (let i = 0; i < 2; i++) {
-        cy.contains('Third Blog').parent().find('button').contains('like').click()
-        cy.wait(300)
-      }
-      cy.contains('First Blog').parent().find('button').contains('like').click()
-      cy.wait(300)
+    cy.contains('Third Blog').parent().find('button').contains('like').click()
+    cy.contains('Third Blog').parent().should('contain', `likes ${i + 1}`)
+  }
 
-      cy.get('.blog').eq(0).should('contain', 'Second Blog')
-      cy.get('.blog').eq(1).should('contain', 'Third Blog')
-      cy.get('.blog').eq(2).should('contain', 'First Blog')
-    })
+  // First Blog: 1 like
+  cy.contains('First Blog').parent().find('button').contains('like').click()
+  cy.contains('First Blog').parent().should('contain', 'likes 1')
+
+  // Tarkista järjestys
+  cy.get('.blog').eq(0).should('contain', 'Second Blog')
+  cy.get('.blog').eq(1).should('contain', 'Third Blog')
+  cy.get('.blog').eq(2).should('contain', 'First Blog')
+})
 
 })
