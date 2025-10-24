@@ -34,11 +34,10 @@ export const initializeAnecdotes = () => {
   }
 }
 
-export const createNewAnecdote = (content) => {
-  return async dispatch => {
+export const createNewAnecdote = (content) => async dispatch => {
     const newAnecdote = await anecdotesService.createNew(content)
     dispatch(createAnecdote(newAnecdote))
-  }
+
 }
 
 export default anecdoteSlice.reducer

@@ -4,10 +4,11 @@ import { setNotificationTimeOut } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
   const dispatch = useDispatch()
-  const { anecdotes, filter } = useSelector(state => state)
+  const anecdotes = useSelector(state => state.anecdotes)
+  const filter = useSelector(state => state.filter)
 
   const filteredAnecdotes = anecdotes
-    .filter(a => a.content.toLowerCase().includes(filter.toLowerCase()))
+    .filter(a => a.content?.toLowerCase().includes(filter.toLowerCase()))
     .sort((a, b) => b.votes - a.votes)
     
   const vote = (anecdote) => {
