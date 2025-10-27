@@ -17,7 +17,7 @@ export const setNotificationTimeOut = (message) => {
     return(dispatch)=> {
         dispatch(setNotification(message))
         setTimeout(() => 
-            dispatch(setNotification('')), 5000) 
+            dispatch(setNotification('')), 10000) 
     }
 }
 export default notificationSlice.reducer

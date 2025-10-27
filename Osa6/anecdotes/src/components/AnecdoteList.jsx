@@ -12,8 +12,8 @@ const AnecdoteList = () => {
     .sort((a, b) => b.votes - a.votes)
     
   const vote = (anecdote) => {
-    dispatch(voteAnecdote(anecdote))
-    dispatch(setNotificationTimeOut(`You voted for: '${anecdote.content}'`))
+    dispatch(voteAnecdoteThunk(anecdote))
+    dispatch(setNotificationTimeOut(`👍 You voted for: '${anecdote.content}' 👍`, 10))
   }
 
 
@@ -27,7 +27,7 @@ const AnecdoteList = () => {
           </div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => dispatch(voteAnecdoteThunk(anecdote))}>vote</button>
+            <button onClick={() => vote(anecdote)}>vote</button>
           </div>
         </div>
       )}
