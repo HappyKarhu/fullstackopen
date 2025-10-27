@@ -1,13 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 import anecdotesService from '../services/anecdotes'
 
-
-const initialState = []
-
-
 const anecdoteSlice = createSlice({
   name: 'anecdotes',
-  initialState,
+  initialState: [],
   reducers: {
     voteAnecdote(state, action) {
       const id=action.payload
