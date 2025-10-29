@@ -15,7 +15,11 @@ const App = () => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
       dispatch({ type: 'SET', payload: `Anecdote '${newAnecdote.content}' created.` })
       setTimeout(() => dispatch({ type: 'CLEAR' }), 5000)
-    }
+    },
+    onError: (error) => {
+    dispatch({ type: 'SET', payload: 'Too short anecdote, must have lenght 5 or more.' })
+    setTimeout(() => dispatch({ type: 'CLEAR' }), 5000)
+  }
     })
   
 
