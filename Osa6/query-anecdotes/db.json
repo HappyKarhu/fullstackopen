@@ -3,7 +3,7 @@
     {
       "content": "If it hurts, do it more often",
       "id": "47145",
-      "votes": 3
+      "votes": 6
     },
     {
       "content": "Adding manpower to a late software project makes it later!",
@@ -41,6 +41,22 @@
       "important": true,
       "id": "hOk32F0",
       "votes": 5
+    },
+    {
+      "content": "testna anekdota",
+      "important": true,
+      "id": "ESinkIU",
+      "votes": 1
+    },
+    {
+      "content": "testiranje backend",
+      "important": true,
+      "id": "yrEpFCr"
+    },
+    {
+      "content": "You do not know how smart I am in my language",
+      "important": true,
+      "id": "5cxfAJN"
     }
   ]
 }
