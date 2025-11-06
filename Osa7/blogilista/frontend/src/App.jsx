@@ -5,14 +5,15 @@ import loginService from "./services/login";
 import Notification from "./components/notification";
 import CreateBlogForm from "./components/createBlogForm";
 import Togglable from "./components/Togglable";
+import { useDispatch } from 'react-redux';
+import { setNotification, clearNotification } from './redux/notificationReducer';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [notification, setNotification] = useState(null);
-  const [notificationType, setNotificationType] = useState("success");
+  const dispatch = useDispatch()
 
   const addBlog = async (blogObject) => {
     try {
@@ -23,11 +24,11 @@ const App = () => {
         id: user.id,
       };
       setBlogs(blogs.concat(createdBlog));
-      setNotification(
-        `A new blog ${createdBlog.title} by ${createdBlog.author} added`,
-      );
-      setNotificationType("success");
-      setTimeout(() => setNotification(null), 8000);
+      dispatch(setNotification({message: `A new blog ${createdBlog.title} by ${createdBlog.author} added`, type: 'success'}))
+      setTimeout(() => {
+        dispatch(clearNotification())
+      }, 8000)
+
     } catch (error) {
       console.error(error);
     }
@@ -61,19 +62,18 @@ const App = () => {
       setPassword("");
       blogService.setToken(loggedUser.token);
     } catch {
-      setNotification("Wrong Username or Password - Please, try again");
-      setNotificationType("error");
-      setTimeout(() => {
-        setNotification(null);
-      }, 8000);
-    }
+    dispatch(setNotification({message: 'Wrong Username or Password - Please, try again',type: 'error'}))
+    setTimeout(() => {
+      dispatch(clearNotification())
+    }, 8000)
+      }
   };
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
     setBlogs([]);
-    setNotification(null);
+    dispatch(clearNotification());
   };
 
   const updateBlogInState = (returnedBlog) => {
@@ -86,9 +86,10 @@ const App = () => {
     if (window.confirm(`Remove blog: ${title} by ${author}?`)) {
       await blogService.deleteBlog(Id);
       setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== Id));
-      setNotification(`Deleted blog ${title} by ${author}`);
-      setNotificationType("success");
-      setTimeout(() => setNotification(null), 8000);
+      dispatch(setNotification({ message: 'Deleted blog ${title} by ${author}', type: 'success' }))
+      setTimeout(() => {
+      dispatch(clearNotification())
+      }, 8000)
     }
   };
 
@@ -97,7 +98,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Notification message={notification} type={notificationType} />
+        <Notification />
         <form onSubmit={handleLogin}>
           <div>
             <label>
@@ -132,7 +133,7 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
-      <Notification message={notification} type={notificationType} />
+      <Notification />
       <p>
         {user.name} logged in. <button onClick={handleLogout}>logout</button>
       </p>
@@ -158,4 +159,4 @@ const App = () => {
     </div>
   );
 };
-export default App;
+export default App
