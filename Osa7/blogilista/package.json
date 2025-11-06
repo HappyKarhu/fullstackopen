@@ -1,0 +1,39 @@
+{
+  "name": "blogilista",
+  "version": "1.0.0",
+  "scripts": {
+    "lint": "eslint frontend --ext .js,.jsx",
+    "lint:fix": "eslint frontend --ext .js,.jsx --fix",
+    "test": "vitest run",
+    "cypress:open": "cypress open",
+    "start:test": "cross-env NODE_ENV=test node backend/index.js",
+    "server": "node backend/index.js",
+    "frontend": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run frontend\""
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "cypress": "^15.3.0",
+    "eslint": "^9.36.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^6.1.0",
+    "eslint-plugin-react-refresh": "^0.4.23",
+    "globals": "^16.4.0",
+    "jsdom": "^27.0.0",
+    "prettier": "3.6.2",
+    "supertest": "^7.1.4",
+    "typescript-eslint": "^8.45.0",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.3"
+  }
+}
