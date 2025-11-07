@@ -7,11 +7,12 @@ import CreateBlogForm from "./components/createBlogForm";
 import Togglable from "./components/Togglable";
 import { useDispatch, useSelector } from 'react-redux';
 import { setNotification, clearNotification } from './redux/notificationReducer';
-import { fetchBlogs, createBlog, updateBlog, removeBlog } from './redux/blogReducer'
+import { fetchBlogs, createBlog, updateBlog, removeBlog } from './redux/blogReducer';
+import { useUser } from './context/UserContext';
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs);
-  const [user, setUser] = useState(null);
+  const { user, dispatch: userDispatch } = useUser();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch()
@@ -45,11 +46,11 @@ const App = () => {
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
+      const loggedUser = JSON.parse(loggedUserJSON);
+      userDispatch({ type: 'LOGIN', payload: loggedUser });
+      blogService.setToken(loggedUser.token);
     }
-  }, []);
+  }, [userDispatch]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -59,10 +60,10 @@ const App = () => {
         "loggedBlogappUser",
         JSON.stringify(loggedUser),
       );
-      setUser(loggedUser);
+      userDispatch({ type: 'LOGIN', payload: loggedUser });
+      blogService.setToken(loggedUser.token);
       setUsername("");
       setPassword("");
-      blogService.setToken(loggedUser.token);
     } catch {
     dispatch(setNotification({message: 'Wrong Username or Password - Please, try again',type: 'error'}))
     setTimeout(() => {
@@ -73,8 +74,7 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
-    setUser(null);
-    setBlogs([]);
+    userDispatch({ type: 'LOGOUT' });
     dispatch(clearNotification());
   };
 
