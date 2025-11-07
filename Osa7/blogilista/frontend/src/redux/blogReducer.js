@@ -17,17 +17,43 @@ export const createBlog = createAsyncThunk(
   }
 )
 
+export const updateBlog = createAsyncThunk(
+  'blogs/update', 
+  async (updatedBlog) => {
+    const returnedBlog = await blogService.updateBlog(updatedBlog.id, updatedBlog)
+    return returnedBlog
+  }
+)
+
+export const removeBlog = createAsyncThunk(
+  'blogs/delete', 
+  async (id) => {
+    await blogService.deleteBlog(id)
+    return id
+  }
+)
+
 const blogSlice = createSlice({
   name: 'blogs',
   initialState: [],
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchBlogs.fulfilled, (state, action) => {
+      .addCase(fetchBlogs.fulfilled, (state, action) => { //fetch all
         return action.payload
       })
-      .addCase(createBlog.fulfilled, (state, action) => {
+      .addCase(createBlog.fulfilled, (state, action) => { //create new
         state.push(action.payload)
+      })
+      .addCase(updateBlog.fulfilled, (state, action) => { //like
+        const updatedBlog = action.payload
+        return state.map((blog) =>
+          blog.id === updatedBlog.id ? updatedBlog : blog
+        )
+      })
+      .addCase(removeBlog.fulfilled, (state, action) => { //delete
+        const id = action.payload
+        return state.filter((blog) => blog.id !== id)
       })
   },
 })

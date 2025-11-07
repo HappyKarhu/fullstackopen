@@ -53,15 +53,15 @@ blogsRouter.delete(
 
 blogsRouter.put("/:id", async (request, response) => {
   const id = request.params.id;
-  const { title, likes, author, url, user } = request.body;
+  const update = request.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return response.status(400).json({ error: "invalid id" });
   }
 
-  const blog = { title, author, url, likes, user };
-
-  const updatedBlog = await Blog.findByIdAndUpdate(id, blog, {
+  
+try{
+  const updatedBlog = await Blog.findByIdAndUpdate(id, update, {
     new: true,
     runValidators: true,
     context: "query",
@@ -72,6 +72,10 @@ blogsRouter.put("/:id", async (request, response) => {
   } else {
     response.status(404).end();
   }
+} catch (error){
+  console.error(error);
+  response.status(500).json({error: error.message});
+}
 });
 
 module.exports = blogsRouter;

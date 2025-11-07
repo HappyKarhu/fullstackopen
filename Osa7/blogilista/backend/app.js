@@ -5,7 +5,13 @@ const loginRouter = require("./controllers/login");
 const blogsRouter = require("./controllers/blogs");
 const middleware = require("./utils/middleware");
 const usersRouter = require("./controllers/user");
+const cors=require('cors');
 const app = express();
+
+
+app.use(cors({
+  origin: "http://localhost:5173"
+}));
 
 app.use(express.json());
 app.use(middleware.tokenExtractor);

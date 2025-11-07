@@ -18,32 +18,11 @@ const Blog = ({ blog, user, updateBlog, deleteBlog }) => {
     setBackgroundCOlor(visible ? "yellow" : "#5226ccff");
   }; //true, url,likes &author is visible
 
-  const handleLike = async () => {
-    if (!blog.id) {
-      console.error("Id is missing, cannot like it");
-      return;
+  const handleLike = () => {
+    updateBlog(blog);
     }
-    const updateBlogData = {
-      user: blog.user
-        ? typeof blog.user === "string"
-          ? blog.user
-          : blog.user.id
-        : null,
-      likes: blog.likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url,
-    };
-    try {
-      const returnedBlog = await myBlogs.updateBlog(blog.id, updateBlogData);
-      updateBlog(returnedBlog);
-    } catch (error) {
-      console.error(
-        "Failed to like blog:",
-        error.response?.data || error.message,
-      );
-    }
-  };
+    
+    
   return (
     <div className="blog" data-cy="blog" style={blogStyle}>
       <div className="blog-title-author">

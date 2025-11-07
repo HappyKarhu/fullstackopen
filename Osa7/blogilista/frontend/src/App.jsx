@@ -7,7 +7,7 @@ import CreateBlogForm from "./components/createBlogForm";
 import Togglable from "./components/Togglable";
 import { useDispatch, useSelector } from 'react-redux';
 import { setNotification, clearNotification } from './redux/notificationReducer';
-import { fetchBlogs, createBlog } from './redux/blogReducer'
+import { fetchBlogs, createBlog, updateBlog, removeBlog } from './redux/blogReducer'
 
 const App = () => {
   const blogs = useSelector((state) => state.blogs);
@@ -78,22 +78,27 @@ const App = () => {
     dispatch(clearNotification());
   };
 
-  const updateBlogInState = (returnedBlog) => {
-    setBlogs(
-      blogs.map((blog) => (blog.id === returnedBlog.id ? returnedBlog : blog)),
-    );
-  };
 
-  const handleDelete = async (Id, title, author) => {
-    if (window.confirm(`Remove blog: ${title} by ${author}?`)) {
-      await blogService.deleteBlog(Id);
-      setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== Id));
-      dispatch(setNotification({ message: 'Deleted blog ${title} by ${author}', type: 'success' }))
-      setTimeout(() => {
-      dispatch(clearNotification())
-      }, 8000)
+  const handleDelete = async (id, title, author) => {
+  if (window.confirm(`Remove blog: ${title} by ${author}?`)) {
+    try {
+      await dispatch(removeBlog(id));
+      dispatch(setNotification({ 
+        message: `Deleted blog ${title} by ${author}`, 
+        type: 'success' 
+      }));
+      setTimeout(() => dispatch(clearNotification()), 8000);
+    } catch (error) {
+      console.error("Failed to delete blog:", error.response?.data || error.message);
     }
-  };
+  }
+};
+
+//za like
+const handleLike = (blog) => {
+  dispatch(updateBlog({ id: blog.id, likes: blog.likes + 1 }));
+  
+};
 
   if (user === null) {
     //if noone is logged in
@@ -153,8 +158,9 @@ const App = () => {
               key={blog.id}
               blog={blog}
               user={user}
-              updateBlog={updateBlogInState}
+              updateBlog={handleLike}
               deleteBlog={handleDelete}
+              
             />
           ))}
       </div>
