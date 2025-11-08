@@ -5,103 +5,154 @@ import loginService from "./services/login";
 import Notification from "./components/notification";
 import CreateBlogForm from "./components/createBlogForm";
 import Togglable from "./components/Togglable";
-import { useDispatch, useSelector } from 'react-redux';
-import { setNotification, clearNotification } from './redux/notificationReducer';
-import { fetchBlogs, createBlog, updateBlog, removeBlog } from './redux/blogReducer';
-import { useUser } from './context/UserContext';
+import { useUser } from "./context/UserContext";
+import { useNotification } from "./context/NotificationContext";;
 
 const App = () => {
-  const blogs = useSelector((state) => state.blogs);
   const { user, dispatch: userDispatch } = useUser();
+  const { dispatch} = useNotification();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const dispatch = useDispatch()
-
-  const addBlog = async (blogObject) => {
-    try {
-      const resultAction=await dispatch(createBlog(blogObject));
-
-      if (createBlog.fulfilled.match(resultAction)) {
-        dispatch(setNotification({
-          message: `A new blog ${resultAction.payload.title} by ${resultAction.payload.author} added`,
-          type: 'success',
-        })
-        )
-      
-      setTimeout(() => {
-        dispatch(clearNotification())
-      }, 8000)
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
+  const [blogs, setBlogs] = useState([]);
+  
+  //fetch blogs when log in
   useEffect(() => {
-    if (user) {
-      dispatch(fetchBlogs())
-    }
-  }, [user, dispatch]);
+    const fetchBlogs = async () => {
+      const allBlogs = await blogService.getAll();
+      setBlogs(allBlogs);
+    };
 
+    if (user) {
+      fetchBlogs();
+    }
+  }, [user]);
+
+  //check logged in user
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
       const loggedUser = JSON.parse(loggedUserJSON);
-      userDispatch({ type: 'LOGIN', payload: loggedUser });
+      userDispatch({ type: "LOGIN", payload: loggedUser });
       blogService.setToken(loggedUser.token);
     }
   }, [userDispatch]);
 
+  //add blog
+  const addBlog = async (blogObject) => {
+      try {
+      const newBlog = await blogService.createBlog(blogObject);
+      setBlogs(blogs.concat(newBlog));
+
+        dispatch({
+          type: 'SET_NOTIFICATION',
+          payload: {
+            message: `A new blog "${newBlog.title}" by ${newBlog.author} added`,
+            type: "success",
+          }
+      });
+        setTimeout(() => {
+          dispatch({ type: 'CLEAR_NOTIFICATION' })
+        }, 8000);
+  } catch (error) {
+      dispatch({
+        type: "SET_NOTIFICATION",
+        payload: {
+          message: "Failed to add blog",
+          type: "error",
+        },
+      });
+      setTimeout(() => {
+        dispatch({ type: "CLEAR_NOTIFICATION" });
+      }, 8000);
+    }
+  };
+
+  //login
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const loggedUser = await loginService.login({ username, password });
+    const loggedUser = await loginService.login({ username, password });
       window.localStorage.setItem(
         "loggedBlogappUser",
-        JSON.stringify(loggedUser),
+        JSON.stringify(loggedUser)
       );
-      userDispatch({ type: 'LOGIN', payload: loggedUser });
+    userDispatch({ type: "LOGIN", payload: loggedUser });
       blogService.setToken(loggedUser.token);
       setUsername("");
       setPassword("");
     } catch {
-    dispatch(setNotification({message: 'Wrong Username or Password - Please, try again',type: 'error'}))
-    setTimeout(() => {
-      dispatch(clearNotification())
-    }, 8000)
-      }
+      dispatch({
+        type: "SET_NOTIFICATION",
+        payload: {
+          message: "Wrong Username or Password - Please, try again",
+          type: "error",
+        },
+      });
+      setTimeout(() => {
+        dispatch({ type: "CLEAR_NOTIFICATION" });
+      }, 8000);
+    }
   };
 
+  //logout
   const handleLogout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     userDispatch({ type: 'LOGOUT' });
-    dispatch(clearNotification());
+    dispatch({ type: "CLEAR_NOTIFICATION" });
+    setBlogs([]);
   };
 
-
+  //delete
   const handleDelete = async (id, title, author) => {
   if (window.confirm(`Remove blog: ${title} by ${author}?`)) {
     try {
-      await dispatch(removeBlog(id));
-      dispatch(setNotification({ 
-        message: `Deleted blog ${title} by ${author}`, 
-        type: 'success' 
-      }));
-      setTimeout(() => dispatch(clearNotification()), 8000);
-    } catch (error) {
-      console.error("Failed to delete blog:", error.response?.data || error.message);
+        await blogService.deleteBlog(id);
+        setBlogs(blogs.filter((b) => b.id !== id));
+    
+      dispatch({
+          type: "SET_NOTIFICATION",
+          payload: {
+            message: `Deleted blog ${title} by ${author}`,
+            type: "success",
+          },
+        });
+        setTimeout(() => {
+          dispatch({ type: "CLEAR_NOTIFICATION" });
+        }, 8000);
+        } catch (error) {
+        dispatch({
+          type: "SET_NOTIFICATION",
+          payload: {
+            message: "Failed to delete blog",
+            type: "error",
+          },
+        });
+        setTimeout(() => {
+          dispatch({ type: "CLEAR_NOTIFICATION" });
+        }, 8000);
+      }
     }
-  }
-};
+  };
+
 
 //za like
-const handleLike = (blog) => {
-  dispatch(updateBlog({ id: blog.id, likes: blog.likes + 1 }));
-  
-};
-
-  if (user === null) {
+  const handleLike = async (blog) => {
+      try {
+      const blogForUpdate = {
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: blog.likes + 1
+        };
+        const updatedBlog = await blogService.updateBlog(blog.id, blogForUpdate);
+    setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)));
+        } catch (error) {
+        console.error("Failed to like blog:", error);
+      }
+    };
+    
     //if noone is logged in
+  if (!user) {
     return (
       <div>
         <h2>Log in to application</h2>
@@ -137,6 +188,7 @@ const handleLike = (blog) => {
     );
   }
 
+  //main blog page
   return (
     <div>
       <h2>Blogs</h2>
@@ -166,5 +218,5 @@ const handleLike = (blog) => {
       </div>
     </div>
   );
-};
+}
 export default App
