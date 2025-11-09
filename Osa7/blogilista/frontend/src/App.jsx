@@ -97,23 +97,17 @@ const App = () => {
   };
 
   //delete
-  const handleDelete = async (id, title, author) => {
-  if (window.confirm(`Remove blog: ${title} by ${author}?`)) {
-    try {
-        await blogService.deleteBlog(id);
-        //setBlogs(blogs.filter((b) => b.id !== id));
-    
-      dispatch({
-          type: "SET_NOTIFICATION",
-          payload: {
-            message: `Deleted blog ${title} by ${author}`,
-            type: "success",
-          },
-        });
-        setTimeout(() => {
-          dispatch({ type: "CLEAR_NOTIFICATION" });
-        }, 8000);
-        } catch (error) {
+  const deleteBlogMutation = useMutation({
+  mutationFn: blogService.deleteBlog,
+  onSuccess: (_, id) => {
+    queryClient.invalidateQueries('blogs');
+    dispatch({
+      type: "SET_NOTIFICATION",
+      payload: { message: "Blog deleted", type: "success" },
+    });
+    setTimeout(() => dispatch({ type: "CLEAR_NOTIFICATION" }), 8000);
+  },
+  onError: () => {
         dispatch({
           type: "SET_NOTIFICATION",
           payload: {
@@ -121,30 +115,37 @@ const App = () => {
             type: "error",
           },
         });
-        setTimeout(() => {
-          dispatch({ type: "CLEAR_NOTIFICATION" });
-        }, 8000);
-      }
-    }
-  };
+        setTimeout(() => dispatch({ type: "CLEAR_NOTIFICATION" }), 8000);
+      },
+  });
 
+  const handleDelete = (id, title, author) => {
+  if (window.confirm(`Remove blog: ${title} by ${author}?`)) {
+    deleteBlogMutation.mutate(id);
+  }
+};
 
 //za like
-  const handleLike = async (blog) => {
-      try {
-      const blogForUpdate = {
-        title: blog.title,
-        author: blog.author,
-        url: blog.url,
-        likes: blog.likes + 1
-        };
-        const updatedBlog = await blogService.updateBlog(blog.id, blogForUpdate);
-    setBlogs(blogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b)));
-        } catch (error) {
-        console.error("Failed to like blog:", error);
-      }
-    };
-    
+  const updateBlogMutation = useMutation ({
+    mutationFn: ({ id, updatedBlog }) => blogService.updateBlog(id, updatedBlog),
+  onSuccess: () => {
+    queryClient.invalidateQueries('blogs');
+  },
+  onError: (error) => {
+    console.error("Failed to like blog:", error);
+  },
+});
+
+const handleLike = (blog) => {
+  const blogForUpdate = {
+    title: blog.title,
+    author: blog.author,
+    url: blog.url,
+    likes: blog.likes + 1
+  };
+  updateBlogMutation.mutate({ id: blog.id, updatedBlog: blogForUpdate });
+};
+  
     //if noone is logged in
   if (!user) {
     return (
