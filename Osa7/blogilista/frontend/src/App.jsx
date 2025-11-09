@@ -6,26 +6,22 @@ import Notification from "./components/notification";
 import CreateBlogForm from "./components/createBlogForm";
 import Togglable from "./components/Togglable";
 import { useUser } from "./context/UserContext";
-import { useNotification } from "./context/NotificationContext";;
+import { useNotification } from "./context/NotificationContext";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const App = () => {
   const { user, dispatch: userDispatch } = useUser();
   const { dispatch} = useNotification();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [blogs, setBlogs] = useState([]);
+  const queryClient = useQueryClient();
   
-  //fetch blogs when log in
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      const allBlogs = await blogService.getAll();
-      setBlogs(allBlogs);
-    };
-
-    if (user) {
-      fetchBlogs();
-    }
-  }, [user]);
+  //fetch blogs when log in with ReactQuery
+  const { data: blogs = [], isLoading } = useQuery({
+  queryKey: ['blogs'],
+  queryFn: blogService.getAll,
+  enabled: !!user 
+});
 
   //check logged in user
   useEffect(() => {
@@ -37,12 +33,12 @@ const App = () => {
     }
   }, [userDispatch]);
 
-  //add blog
-  const addBlog = async (blogObject) => {
-      try {
-      const newBlog = await blogService.createBlog(blogObject);
-      setBlogs(blogs.concat(newBlog));
-
+  //add blog-create
+  const addBlogMutation = useMutation({
+  mutationFn: blogService.createBlog,
+  onSuccess: (newBlog) => {
+    queryClient.invalidateQueries('blogs');
+  
         dispatch({
           type: 'SET_NOTIFICATION',
           payload: {
@@ -50,10 +46,9 @@ const App = () => {
             type: "success",
           }
       });
-        setTimeout(() => {
-          dispatch({ type: 'CLEAR_NOTIFICATION' })
-        }, 8000);
-  } catch (error) {
+        setTimeout(() => dispatch({ type: 'CLEAR_NOTIFICATION' }), 8000);
+  },
+  onError: () => {
       dispatch({
         type: "SET_NOTIFICATION",
         payload: {
@@ -61,11 +56,11 @@ const App = () => {
           type: "error",
         },
       });
-      setTimeout(() => {
-        dispatch({ type: "CLEAR_NOTIFICATION" });
-      }, 8000);
+      setTimeout(() => dispatch({ type: "CLEAR_NOTIFICATION" }), 8000);
     }
-  };
+  });
+
+  const addBlog = (blogObject) => {addBlogMutation.mutate(blogObject)};
 
   //login
   const handleLogin = async (event) => {
@@ -99,7 +94,6 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     userDispatch({ type: 'LOGOUT' });
     dispatch({ type: "CLEAR_NOTIFICATION" });
-    setBlogs([]);
   };
 
   //delete
@@ -107,7 +101,7 @@ const App = () => {
   if (window.confirm(`Remove blog: ${title} by ${author}?`)) {
     try {
         await blogService.deleteBlog(id);
-        setBlogs(blogs.filter((b) => b.id !== id));
+        //setBlogs(blogs.filter((b) => b.id !== id));
     
       dispatch({
           type: "SET_NOTIFICATION",
