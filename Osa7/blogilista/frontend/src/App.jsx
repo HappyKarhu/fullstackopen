@@ -9,7 +9,8 @@ import { useUser } from "./context/UserContext";
 import { useNotification } from "./context/NotificationContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Users from "./components/Users";
+import Users from "./components/Users"
+import SingleUser from "./components/SingleUser"
 
 const App = () => {
   const { user, dispatch: userDispatch } = useUser();
@@ -200,9 +201,7 @@ const handleLike = (blog) => {
       </nav>
 
       <Routes>
-        <Route
-          path="/"
-          element={
+        <Route path="/" element={
             <>
       <Togglable buttonLabel="Create new Blog" data-cy="toggle-create-blog">
         <CreateBlogForm createBlog={addBlog} />
@@ -226,6 +225,7 @@ const handleLike = (blog) => {
       </>
           }
         />
+        <Route path="/users/:id" element={<SingleUser />} />
         <Route path="/users" element={<Users />} />
       </Routes>
     </div>
