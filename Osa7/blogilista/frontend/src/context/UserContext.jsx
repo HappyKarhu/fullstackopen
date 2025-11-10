@@ -2,7 +2,7 @@ import { createContext, useReducer, useContext } from 'react';
 
 const UserContext = createContext()
 
-const initialState= null //for default value
+const initialState= null //for default value,no user is logged in
 
 const userReducer = (state, action)=> {
     switch (action.type) {

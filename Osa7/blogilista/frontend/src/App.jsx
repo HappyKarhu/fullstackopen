@@ -8,6 +8,8 @@ import Togglable from "./components/Togglable";
 import { useUser } from "./context/UserContext";
 import { useNotification } from "./context/NotificationContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Users from "./components/Users";
 
 const App = () => {
   const { user, dispatch: userDispatch } = useUser();
@@ -185,13 +187,23 @@ const handleLike = (blog) => {
 
   //main blog page
   return (
+    <Router>
     <div>
       <h2>Blogs</h2>
       <Notification />
       <p>
         {user.name} logged in. <button onClick={handleLogout}>logout</button>
       </p>
+      {/* navigator menu is seen */}
+      <nav> 
+        <Link to="/">Blogs</Link> | <Link to="/users">Users</Link>
+      </nav>
 
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
       <Togglable buttonLabel="Create new Blog" data-cy="toggle-create-blog">
         <CreateBlogForm createBlog={addBlog} />
       </Togglable>
@@ -211,7 +223,13 @@ const handleLike = (blog) => {
             />
           ))}
       </div>
+      </>
+          }
+        />
+        <Route path="/users" element={<Users />} />
+      </Routes>
     </div>
+    </Router>
   );
 }
 export default App
