@@ -9,6 +9,7 @@ const SingleBlog = () => {
   const { data: blog } = useQuery({
     queryKey: ["blog", id],
     queryFn: () => blogService.getById(id),
+    enabled: !!id,
   })
 
  const updateBlogMutation = useMutation({
@@ -17,11 +18,9 @@ const SingleBlog = () => {
     })
 
   const handleLike = () => {
-    const updatedBlog = {
-      ...blog,
-      likes: blog.likes + 1,
-    }
-    updateBlogMutation.mutate({ id: blog.id, updatedBlog });
+    if (!blog) return;
+    const updatedBlog = { ...blog, likes: blog.likes + 1 };
+    updateBlogMutation.mutate({ id: blog.id || blog._id, updatedBlog });
   }
 
     if (!blog) return null

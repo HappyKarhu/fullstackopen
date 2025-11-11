@@ -131,7 +131,7 @@ const App = () => {
 //za like
   const updateBlogMutation = useMutation ({
     mutationFn: ({ id, updatedBlog }) => blogService.updateBlog(id, updatedBlog),
-  onSuccess: () => {
+    onSuccess: () => {
     queryClient.invalidateQueries('blogs');
   },
   onError: (error) => {
@@ -146,7 +146,7 @@ const handleLike = (blog) => {
     url: blog.url,
     likes: blog.likes + 1
   };
-  updateBlogMutation.mutate({ id: blog.id, updatedBlog: blogForUpdate });
+  updateBlogMutation.mutate({ id: blog.id || blog._id, updatedBlog: blogForUpdate });
 };
   
     //if noone is logged in
@@ -192,13 +192,14 @@ const handleLike = (blog) => {
     <div>
       <h2>Blogs</h2>
       <Notification />
+      {/* Navigation menu */}
+      <nav>
+        <Link to="/">Blogs</Link> | <Link to="/users">Users</Link>
+      </nav>
       <p>
         {user.name} logged in. <button onClick={handleLogout}>logout</button>
       </p>
-      {/* navigator menu is seen */}
-      <nav> 
-        <Link to="/">Blogs</Link> | <Link to="/users">Users</Link>
-      </nav>
+      
 
       <Routes>
         <Route path="/" element={
@@ -211,18 +212,21 @@ const handleLike = (blog) => {
       <div className="blogs-list">
         {blogs
           .toSorted((a, b) => b.likes - a.likes)
-          .map((blog, index) => (
-          <div key={blog.id || blog._id || index}>
-            <Link to={`/blogs/${blog.id || blog._id}`}>{blog.title} by {blog.author}</Link>
-          </div>
+          .map((blog) => (
+          <div key={blog.id || blog._id}>
+        <Link to={`/blogs/${blog.id || blog._id}`}>
+          {blog.title} by {blog.author}
+        </Link>
+      </div>
           ))}
       </div>
       </>
           }
         />
-        <Route path="/users/:id" element={<SingleUser />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<SingleUser />} />
         <Route path="/blogs/:id" element={<SingleBlog />} />
+
       </Routes>
     </div>
     </Router>
