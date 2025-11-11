@@ -30,6 +30,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",

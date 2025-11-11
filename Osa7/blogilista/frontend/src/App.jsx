@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Notification from "./components/notification";
@@ -11,6 +10,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Users from "./components/Users"
 import SingleUser from "./components/SingleUser"
+import SingleBlog from "./components/SingleBlog"
 
 const App = () => {
   const { user, dispatch: userDispatch } = useUser();
@@ -211,15 +211,10 @@ const handleLike = (blog) => {
       <div className="blogs-list">
         {blogs
           .toSorted((a, b) => b.likes - a.likes)
-          .map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              user={user}
-              updateBlog={handleLike}
-              deleteBlog={handleDelete}
-              
-            />
+          .map((blog, index) => (
+          <div key={blog.id || blog._id || index}>
+            <Link to={`/blogs/${blog.id || blog._id}`}>{blog.title} by {blog.author}</Link>
+          </div>
           ))}
       </div>
       </>
@@ -227,6 +222,7 @@ const handleLike = (blog) => {
         />
         <Route path="/users/:id" element={<SingleUser />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/blogs/:id" element={<SingleBlog />} />
       </Routes>
     </div>
     </Router>

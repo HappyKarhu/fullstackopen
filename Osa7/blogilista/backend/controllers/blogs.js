@@ -8,6 +8,26 @@ blogsRouter.get("/", async (request, response) => {
   response.json(blogs);
 });
 
+blogsRouter.get("/:id", async (request, response) => {
+  const { id } = request.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return response.status(400).json({ error: "invalid id" });
+  }
+
+  try {
+    const blog = await Blog.findById(id).populate("user", { username: 1, name: 1 });
+    if (blog) {
+      response.json(blog);
+    } else {
+      response.status(404).json({ error: "blog not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ error: error.message });
+  }
+});
+
 blogsRouter.post("/", middleware.userExtractor, async (request, response) => {
   const body = request.body;
   const user = request.user;
