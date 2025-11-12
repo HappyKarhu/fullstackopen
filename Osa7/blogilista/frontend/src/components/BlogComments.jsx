@@ -48,7 +48,7 @@ const BlogComments = ({ blogId }) => {
         <button type="submit">Add Comment</button>
       </form>
       
-
+      <br />
       <TableContainer component={Paper}
       sx={{ backgroundColor: "#4a9ba1ff", padding: 1 }}>
         <Table>

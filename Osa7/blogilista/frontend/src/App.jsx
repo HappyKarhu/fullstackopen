@@ -250,7 +250,7 @@ const padding = {
         <CreateBlogForm createBlog={addBlog} />
       </Togglable>
       <br />
-
+      
       <div className="blogs-list">
         {blogs
           .toSorted((a, b) => b.likes - a.likes)
