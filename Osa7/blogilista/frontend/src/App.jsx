@@ -11,6 +11,25 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Users from "./components/Users"
 import SingleUser from "./components/SingleUser"
 import SingleBlog from "./components/SingleBlog"
+import { Table, Form, Button, Navbar, Nav } from 'react-bootstrap'
+import styled from 'styled-components'
+
+const CustomNavbar = styled(Navbar)`
+  background: linear-gradient(90deg, #4a9ba1, #78c0c5);
+  color: #fdf6ec;
+  border-radius: 8px;
+  margin-bottom: 1.5em;
+
+  a {
+    color: #fff !important;
+    text-decoration: none;
+    margin-right: 10px;
+
+    &:hover {
+      color: #ecd5d9; /* soft pinkish hover */
+    }
+  }
+`
 
 const App = () => {
   const { user, dispatch: userDispatch } = useUser();
@@ -149,39 +168,40 @@ const handleLike = (blog) => {
   updateBlogMutation.mutate({ id: blog.id ?? blog._id, updatedBlog: blogForUpdate });
 };
   
-    //if noone is logged in
+const padding = {
+  padding: 5
+}
+  //if noone is logged in -LoginForm
   if (!user) {
     return (
-      <div>
+      <div className="container">
         <h2>Log in to application</h2>
         <Notification />
-        <form onSubmit={handleLogin}>
-          <div>
-            <label>
-              username
-              <input
-                name="username"
-                type="text"
-                value={username}
-                onChange={({ target }) => setUsername(target.value)}
-              />
-            </label>
-          </div>
-          <div>
-            <label>
-              password
-              <input
-                name="password"
-                type="password"
-                value={password}
-                onChange={({ target }) => setPassword(target.value)}
-              />
-            </label>
-          </div>
-          <button id="login-button" type="submit">
-            login
-          </button>
-        </form>
+        <Form onSubmit={handleLogin}>
+          <Form.Group className="mb-3">
+            <Form.Label>Username</Form.Label>
+            <Form.Control
+              type="text"
+              value={username}
+              onChange={({ target }) => setUsername(target.value)}
+              placeholder="Enter username"
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+      <Form.Label>Password</Form.Label>
+      <Form.Control
+        type="password"
+        value={password}
+        onChange={({ target }) => setPassword(target.value)}
+        placeholder="Enter password"
+      />
+    </Form.Group>
+
+          <Button variant="primary" type="submit">
+            Login
+          </Button>
+        </Form>
       </div>
     );
   }
@@ -189,17 +209,39 @@ const handleLike = (blog) => {
   //main blog page
   return (
     <Router>
-    <div>
-      <h2>Blogs</h2>
+    <div className="container">
+      
       <Notification />
+
       {/* Navigation menu */}
-      <nav>
-        <Link to="/">Blogs</Link> | <Link to="/users">Users</Link>
-      </nav>
+      <CustomNavbar collapseOnSelect expand="lg" variant="dark">
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="me-auto">
+          <Nav.Link as="span">
+            <Link to="/">Blogs</Link>
+          </Nav.Link>
+          <Nav.Link as="span">
+            <Link to="/users">Users</Link>
+          </Nav.Link>
+          <Nav.Link as="span">
+            {user ? <em>{user.name} logged in</em> : <Link to="/login">Login</Link>}
+          </Nav.Link>
+        </Nav>
+        </Navbar.Collapse>
+      </CustomNavbar>
+
       <p>
         {user.name} logged in. <button onClick={handleLogout}>logout</button>
       </p>
-      
+      <h1 style={{ 
+        color: '#4a9ba1ff',       
+        borderBottom: '3px solid #ecd5d9ff', 
+        display: 'inline-block', 
+        paddingBottom: '4px'
+      }}>
+        Blog App
+      </h1>
 
       <Routes>
         <Route path="/" element={

@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import blogService from "../services/blogs"
+import {Container,Table,TableBody,TableCell,TableContainer,TableRow,Paper,} from '@mui/material'
 
 const BlogComments = ({ blogId }) => {
   const queryClient = useQueryClient();
@@ -34,15 +35,10 @@ const BlogComments = ({ blogId }) => {
   }
 
   return (
-    <div>
-      <h3>Comments</h3>
-      <ul>
-        {comments.map((c, index) => (
-          <li key={index}>{c.content}</li>
-        ))}
-      </ul>
+   <Container sx={{ backgroundColor: '#ecd5d9ff', minHeight: '100vh', paddingTop: 2 }}>
+    <h3>Comments</h3>
 
-      <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={newComment}
@@ -51,8 +47,27 @@ const BlogComments = ({ blogId }) => {
         />
         <button type="submit">Add Comment</button>
       </form>
-    </div>
+      
+
+      <TableContainer component={Paper}
+      sx={{ backgroundColor: "#4a9ba1ff", padding: 1 }}>
+        <Table>
+          <TableBody>
+            {comments.map((comment, index) => (
+                <TableRow key={comment.id ?? comment._id ?? index}>
+                  <TableCell>{comment.content}</TableCell>
+                  <TableCell>{comment.user}<span style={{ float: 'right'}}>☀️</span></TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>  
   )
 }
+
+      
+  
+
 
 export default BlogComments

@@ -36,20 +36,33 @@ const SingleBlog = () => {
   if (!blog) return null
 
   return (
-    <div>
-      <h2>{blog.title}</h2>
+    <div style={{ backgroundColor: '#ecd5d9ff', minHeight: '100vh', padding: '20px', borderRadius: '8px' }}>
+      <h2 style={{ color: '#4a9ba1ff', textDecoration: 'underline' }}>{blog.title}</h2>
       <p>
-        <a href={blog.url} target="_blank" rel="noreferrer">
+        <a href={blog.url} target="_blank" rel="noreferrer" style={{ color: '#1d3557', textDecoration: 'none' }}>
           {blog.url}
         </a>
       </p>
       <p>
-        {blog.likes} likes <button onClick={handleLike}>like</button>
+        <button
+          onClick={handleLike}
+          style={{
+            backgroundColor: '#4a9ba1ff',
+            color: 'white',
+            border: 'none',
+            padding: '6px 12px',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            marginRight: '8px'
+          }}
+        >
+          👍 {blog.likes} like{blog.likes !== 1 ? 's' : ''}
+        </button>
       </p>
 
       <p>Blog added by {blog.author ?? blog.user?.name}</p>
 
-  {blog && <BlogComments blogId={blog.id ?? blog._id} />}
+      {blog && <BlogComments blogId={blog.id ?? blog._id} />}
     </div>
   )
 }

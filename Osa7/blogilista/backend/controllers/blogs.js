@@ -109,7 +109,11 @@ blogsRouter.get("/:id/comments", async (request, response) => {
 
   const blog = await Blog.findById(id)
   if (blog) {
-    response.json(blog.comments)
+    const comments = (blog.comments || []).map((c) => ({
+      content: c.content,
+      id: c._id ? c._id.toString() : undefined,
+    }))
+    response.json(comments)
   } else {
     response.status(404).end()
   }
@@ -133,9 +137,11 @@ blogsRouter.post("/:id/comments", async (request, response) => {
 
   const comment = { content: content.trim() }
   blog.comments.push(comment)
-  await blog.save()
+  const savedBlog = await blog.save()
 
-  response.status(201).json(comment)
+  const saved = savedBlog.comments[savedBlog.comments.length - 1]
+  const result = { content: saved.content, id: saved._id ? saved._id.toString() : undefined }
+  response.status(201).json(result)
 })
 
 module.exports = blogsRouter
