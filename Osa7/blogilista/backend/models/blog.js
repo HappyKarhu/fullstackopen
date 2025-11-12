@@ -1,4 +1,9 @@
-const mongoose = require("mongoose"); //This-all allows Mongoose to populate the user info when fetching blogs
+const mongoose = require("mongoose")
+
+//coments (if for example date is needed or user, add here)
+const commentSchema = new mongoose.Schema({
+  content: {type: String, required: true}
+})
 
 const blogSchema = new mongoose.Schema({
   title: String,
@@ -6,26 +11,33 @@ const blogSchema = new mongoose.Schema({
   url: String,
   likes: { type: Number, default: 0 },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  comments: [commentSchema]
 });
 
 blogSchema.set("toJSON", {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
+    // Ensure comments are included and ids are strings
+    const user = returnedObject.user
+      ? {
+          username: returnedObject.user.username,
+          name: returnedObject.user.name,
+          id: returnedObject.user.id,
+        }
+      : null;
+
     return {
       url: returnedObject.url,
       title: returnedObject.title,
       author: returnedObject.author,
-      user: returnedObject.user
-        ? {
-            username: returnedObject.user.username,
-            name: returnedObject.user.name,
-            id: returnedObject.user.id,
-          }
-        : null, //when missing user
+      user,
       likes: returnedObject.likes,
       id: returnedObject._id.toString(),
+      comments: (returnedObject.comments || []).map((c) => ({
+        content: c.content,
+        id: c._id ? c._id.toString() : undefined,
+      })),
     };
   },
 });
 
-module.exports = mongoose.model("Blog", blogSchema);
+module.exports = mongoose.model("Blog", blogSchema)

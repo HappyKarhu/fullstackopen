@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
 import blogService from "../services/blogs"
+import BlogComments from "./BlogComments"
 
 const SingleBlog = () => {
   const { id } = useParams()
@@ -9,23 +10,32 @@ const SingleBlog = () => {
   const { data: blog } = useQuery({
     queryKey: ["blog", id],
     queryFn: () => blogService.getById(id),
-    enabled: !!id,
+    enabled: !!id && id !== 'undefined',
   })
 
  const updateBlogMutation = useMutation({
     mutationFn: ({ id, updatedBlog }) => blogService.updateBlog(id, updatedBlog),
-    onSuccess: () => queryClient.invalidateQueries(["blogs", id]),
+    onSuccess: () => {
+
+      queryClient.invalidateQueries(["blog", id])
+      queryClient.invalidateQueries(["blogs"])
+    },
     })
 
   const handleLike = () => {
     if (!blog) return;
-    const updatedBlog = { ...blog, likes: blog.likes + 1 };
-    updateBlogMutation.mutate({ id: blog.id || blog._id, updatedBlog });
+    const updatedBlog = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: (blog.likes || 0) + 1,
+    };
+    updateBlogMutation.mutate({ id: blog.id ?? blog._id, updatedBlog });
   }
 
-    if (!blog) return null
+  if (!blog) return null
 
-   return (
+  return (
     <div>
       <h2>{blog.title}</h2>
       <p>
@@ -38,6 +48,8 @@ const SingleBlog = () => {
       </p>
 
       <p>Blog added by {blog.author ?? blog.user?.name}</p>
+
+  {blog && <BlogComments blogId={blog.id ?? blog._id} />}
     </div>
   )
 }

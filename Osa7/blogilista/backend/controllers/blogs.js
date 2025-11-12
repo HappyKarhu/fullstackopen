@@ -79,23 +79,63 @@ blogsRouter.put("/:id", async (request, response) => {
     return response.status(400).json({ error: "invalid id" });
   }
 
-  
-try{
-  const updatedBlog = await Blog.findByIdAndUpdate(id, update, {
-    new: true,
-    runValidators: true,
-    context: "query",
-  }).populate("user", { username: 1, name: 1 });
+  try {
+    const blog = await Blog.findById(id);
+    if (!blog) return response.status(404).end();
 
-  if (updatedBlog) {
-    response.json(updatedBlog);
-  } else {
-    response.status(404).end();
+    // Only allow updating these fields
+    const allowed = ["title", "author", "url", "likes"];
+    allowed.forEach((field) => {
+      if (Object.prototype.hasOwnProperty.call(update, field)) {
+        blog[field] = update[field];
+      }
+    });
+
+    const saved = await blog.save();
+    const populated = await saved.populate("user", { username: 1, name: 1 });
+    response.json(populated);
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ error: error.message });
   }
-} catch (error){
-  console.error(error);
-  response.status(500).json({error: error.message});
-}
 });
 
-module.exports = blogsRouter;
+// get all COMMENTS for a blog
+blogsRouter.get("/:id/comments", async (request, response) => {
+  const { id } = request.params
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return response.status(400).json({ error: 'invalid id' })
+  }
+
+  const blog = await Blog.findById(id)
+  if (blog) {
+    response.json(blog.comments)
+  } else {
+    response.status(404).end()
+  }
+})
+
+// Add a comment to a blog (anonymous)
+blogsRouter.post("/:id/comments", async (request, response) => {
+  const { id } = request.params
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return response.status(400).json({ error: 'invalid id' })
+  }
+
+  const blog = await Blog.findById(id)
+  if (!blog) return response.status(404).end()
+
+  const content = request.body?.content
+  if (!content || typeof content !== 'string' || content.trim() === '') {
+    return response.status(400).json({ error: 'content missing or invalid' })
+  }
+
+  const comment = { content: content.trim() }
+  blog.comments.push(comment)
+  await blog.save()
+
+  response.status(201).json(comment)
+})
+
+module.exports = blogsRouter

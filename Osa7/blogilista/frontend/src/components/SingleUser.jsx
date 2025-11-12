@@ -17,8 +17,8 @@ const SingleUser = () => {
         <h3>added blogs</h3>
         <ul>
             {user.blogs.map(blog => (
-            <li key={blog.id || blog._id}>
-                <Link to={`/blogs/${blog.id || blog._id}`}>{blog.title}</Link>
+            <li key={blog.id ?? blog._id}>
+                <Link to={`/blogs/${blog.id ?? blog._id}`}>{blog.title}</Link>
             </li>
             ))}
         </ul>

@@ -146,7 +146,7 @@ const handleLike = (blog) => {
     url: blog.url,
     likes: blog.likes + 1
   };
-  updateBlogMutation.mutate({ id: blog.id || blog._id, updatedBlog: blogForUpdate });
+  updateBlogMutation.mutate({ id: blog.id ?? blog._id, updatedBlog: blogForUpdate });
 };
   
     //if noone is logged in
@@ -212,9 +212,9 @@ const handleLike = (blog) => {
       <div className="blogs-list">
         {blogs
           .toSorted((a, b) => b.likes - a.likes)
-          .map((blog) => (
-          <div key={blog.id || blog._id}>
-        <Link to={`/blogs/${blog.id || blog._id}`}>
+          .map((blog, index) => (
+          <div key={blog.id ?? blog._id ?? index}>
+        <Link to={`/blogs/${blog.id ?? blog._id}`}>
           {blog.title} by {blog.author}
         </Link>
       </div>
