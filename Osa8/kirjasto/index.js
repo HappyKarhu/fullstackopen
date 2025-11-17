@@ -90,15 +90,22 @@ let books = [
 ]
 
 const typeDefs = `
-type Book {
+interface Node {
+  id: ID! 
+}
+
+type Book implements Node {
+    id: ID!
     title: String!
     author: String!
     published: Int!
     genres: [String!]!
 }
 
-type Author {
+type Author implements Node {
+    id: ID!
     name: String!
+    born: Int
     bookCount: Int!
 }
 
@@ -108,6 +115,15 @@ type Query {
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
   }
+
+type Mutation {
+  addBook(
+    title: String!, 
+    author: String!, 
+    published: Int!, 
+    genres: [String!]!
+    ): Book
+}
 `
 
 const resolvers = {
@@ -116,22 +132,45 @@ const resolvers = {
     authorCount: () => authors.length,
     allBooks: (root, args) => {
       return books.filter(book => {
-      if (args.author && args.genre) { //author is provided!
-        return book.author === args.author && book.genres.includes(args.genre)
-    } else if (args.author) {
-      return book.author === args.author
-    } else if (args.genre) {
-      return book.genres.includes(args.genre)
-    }
-    return true
+      if (args.author && args.genre) return book.author === args.author && book.genres.includes(args.genre)
+      if (args.author) return book.author === args.author
+      if (args.genre) return book.genres.includes(args.genre)
+      return true
   })
     },
     allAuthors: () => authors.map(author => ({
+      id: author.id,
       name: author.name,
+      born: author.born,
       bookCount: books.filter(book => book.author === author.name).length
     }))
-  }
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      let existingAuthor = authors.find(a => a.name === args.author)
+      if (!existingAuthor) {
+        const newAuthor = { id: `${Math.random()}`, name: args.author, born: null }
+        authors.push(newAuthor)
+      }
+      const newBook = { ...args, id: `${Math.random()}` }
+      books.push(newBook)
+      return newBook
+    }
+  },
+  Node: {
+    __resolveType(obj) {
+      if (obj.title) {
+        return 'Book'
+      }
+      if (obj.name) {
+        return 'Author'
+      }
+      return null
+    },
 }
+}
+
+
 
 const server = new ApolloServer({
   typeDefs,
