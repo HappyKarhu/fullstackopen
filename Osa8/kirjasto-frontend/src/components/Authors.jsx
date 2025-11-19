@@ -6,7 +6,6 @@ const Authors = (props) => {
   const [name, setName] = useState('')
   const [born, setBorn] = useState('')
   
-  
   //fetch authors from GraphQL server
   const result = useQuery(ALL_AUTHORS)
   const [setAuthor] = useMutation(SET_AUTHOR, { refetchQueries: [{ query: ALL_AUTHORS }],
@@ -47,12 +46,14 @@ const Authors = (props) => {
         </tbody>
       </table>
 
-    <h3>Set birthyear</h3>
+{/*dropdown with only existing authors */}
+
+    <h3>Set birthyear to an existing author</h3>
       <form onSubmit={submit}>
         <div>
           name
           <select value={name} onChange={({ target }) => setName(target.value)}>
-            <option value=""></option>
+            <option value="">Select an Author</option>
             {authors.map(a => (
               <option key={a.name} value={a.name}>
                 {a.name}
