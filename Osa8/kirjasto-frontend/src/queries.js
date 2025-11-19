@@ -1,5 +1,6 @@
 import {gql} from '@apollo/client'
 
+//name=authour object
 export const ALL_AUTHORS = gql`
   query {
     allAuthors {
@@ -10,6 +11,8 @@ export const ALL_AUTHORS = gql`
   }
 }
 `
+
+//author=book object
 export const ALL_BOOKS = gql`
   query {
     allBooks {
@@ -37,6 +40,21 @@ export const CREATE_BOOK = gql`
       author
     published
     genres
+    id
+  }
+}  
+`
+export const SET_AUTHOR = gql`
+  mutation editAuthor(
+    $name: String!
+    $born: Int!
+  ) {
+    editAuthor(
+      name: $name
+      setBornTo: $born
+      ) {
+    name
+    born
     id
   }
 }  
