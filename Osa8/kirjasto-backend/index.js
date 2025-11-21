@@ -59,28 +59,45 @@ type Mutation {
 //resolvers
 const resolvers = {
   Query: {
+    //total number of books in DB
     bookCount: async () => Book.collection.countDocuments(),
+    //total number of authors in DB
     authorCount: async () => Author.collection.countDocuments(),
 
-    allBooks: async () => {
-      return Book.find({}).populate('author') //return all books with author details
+    //all books, with optional filters by genre and author
+    allBooks: async (root, args) => {
+      const filter = {}
+
+      if (args.author) {
+        const author = await Author.findOne({ name: args.author })
+        if (!author) {
+          return []
+        }
+        filter.author = author._id
+      }
+
+      if (args.genre) {
+        filter.genres = { $in: [args.genre] }
+      }
+
+      return Book.find(filter).populate('author')
     },
 
-    allAuthors: async () => {
-      //return authors, bookcount is computed per author
-      const authors = await Author.find({})
-      const authorsWithCount = await Promise.all(authors.map(async (a) => {
-        const count = await Book.countDocuments({ author: a._id })
-        return {
-          id: a._id.toString(),
-          name: a.name,
-          born: a.born,
-          bookCount: count
-        }
-      }))
-      return authorsWithCount
-    },
+    // all authors without bookCount below
+
+
+    allAuthors: async () => Author.find({})
   },
+
+    // resolver field for author.bookcount...graphQL calls this only when requested
+    //it calculates the number of books by specific author
+    
+    Author: {
+      bookCount: async (root) => {
+        return Book.countDocuments({ author: root._id }) //root is the author object (returned from allAuthors()
+      }
+    },
+  
 
   Mutation: {
     addBook: async(root, args) => {
@@ -91,7 +108,7 @@ const resolvers = {
         author = new Author({ name: args.author })
         await author.save()
       }
-
+ //create new book with author ID
       const book = new Book({
         title: args.title,
         published: args.published,
@@ -99,18 +116,20 @@ const resolvers = {
         genres: args.genres
       })
 
+      // save book and populate author field for GraphQL return
       await book.save()
       await book.populate('author')
       return book 
        //return book with author details
     },
 
+    //edit author (born)
     editAuthor: async(root, args) => {
       const author = await Author.findOne({name: args.name})
       if (!author) {
         return null
       }
-      author.born = args.setBornTo
+      author.born = args.setBornTo //update and save
       await author.save()
       return author
     },
