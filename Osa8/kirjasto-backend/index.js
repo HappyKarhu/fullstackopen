@@ -2,6 +2,7 @@ require('dotenv').config()   // load .env variables
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const mongoose = require('mongoose')
+const { GraphQLError } = require('graphql')
 
 const Book = require('./models/Book')
 const Author = require('./models/Author')
@@ -64,7 +65,7 @@ const resolvers = {
     //total number of authors in DB
     authorCount: async () => Author.collection.countDocuments(),
 
-    //all books, with optional filters by genre and author
+    //all books, with filters by genre
     allBooks: async (root, args) => {
       const filter = {}
 
@@ -106,8 +107,19 @@ const resolvers = {
     
       if (!author) {
         author = new Author({ name: args.author })
+        try {
         await author.save()
+      } catch (error) {
+        throw new GraphQLError('Saving author failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.author,
+            error
+          }
+        })
       }
+      }
+      
  //create new book with author ID
       const book = new Book({
         title: args.title,
@@ -115,9 +127,18 @@ const resolvers = {
         author: author._id,
         genres: args.genres
       })
-
+      try {
+        await book.save()
+      } catch (error) {
+        throw new GraphQLError('Saving book failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title,
+            error
+          }
+        })
+      }
       // save book and populate author field for GraphQL return
-      await book.save()
       await book.populate('author')
       return book 
        //return book with author details
