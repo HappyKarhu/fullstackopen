@@ -1,8 +1,9 @@
 import { useQuery } from '@apollo/client/react'
 import {ALL_BOOKS} from '../queries'
-import React from 'react'
+import React, {useState} from 'react'
 
 const Books = (props) => {
+  const [genre, setGenre] = useState(null) //for genre filtering
   if (!props.show) {
     return null
   }
@@ -17,6 +18,13 @@ const Books = (props) => {
     }
 
     const books = result.data?.allBooks || []
+
+    //unique list for all genres
+    const genres = [...new Set(books.flatMap(b => b.genres))]
+
+    const filteredBooks = genre
+    ? books.filter(b => b.genres.includes(genre))
+    : books
 
   return (
     <div>
@@ -38,6 +46,16 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
+      
+      <h3>In genre patterns</h3>
+<div>
+        {genres.map(g =>
+          <button key={g} onClick={() => setGenre(g)}>
+            {g}
+          </button>
+        )}
+        <button onClick={() => setGenre(null)}>all genres</button>
+      </div>
     </div>
   )
 }
