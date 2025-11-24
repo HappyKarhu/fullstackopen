@@ -29,7 +29,7 @@ const Books = (props) => {
   return (
     <div>
       <h2>books</h2>
-
+      <h3>In genre patterns</h3>
       <table>
         <tbody>
           <tr>
@@ -47,7 +47,7 @@ const Books = (props) => {
         </tbody>
       </table>
       
-      <h3>In genre patterns</h3>
+      
 <div>
         {genres.map(g =>
           <button key={g} onClick={() => setGenre(g)}>
