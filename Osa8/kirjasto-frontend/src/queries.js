@@ -74,3 +74,13 @@ export const LOGIN = gql`
     }
   }
 `
+
+//genre
+export const ME = gql`
+  query {
+    me {
+      username
+      favoriteGenre
+    }
+  }
+`

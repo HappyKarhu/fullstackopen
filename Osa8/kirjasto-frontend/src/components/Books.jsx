@@ -29,7 +29,7 @@ const Books = (props) => {
   return (
     <div>
       <h2>books</h2>
-      <h3>In genre patterns</h3>
+      <h3>{genre ? `in genre ${genre}` : 'all genres'}</h3>
       <table>
         <tbody>
           <tr>
@@ -37,7 +37,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((a) => (
+          {filteredBooks.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author?.name || a.author}</td>

@@ -3,6 +3,7 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
+import Recommendations from "./components/Recommendations"
 import { useState } from "react";
 import { useApolloClient } from "@apollo/client/react";
 
@@ -31,6 +32,11 @@ const App = () => {
         {token && (
           <Link style={padding} to="/add">add book</Link>
         )}
+
+        {token && (
+        <Link style={padding} to="/recommended">recommended</Link>
+        )}
+        
         {!token ? (
           <Link style={padding} to="/login">login</Link>
         ) : (
@@ -42,6 +48,7 @@ const App = () => {
         <Route path="/authors" element={<Authors show={true} />} />
         <Route path="/books" element={<Books show={true} />} />
         <Route path="/add" element={<NewBook show={true} />} />
+        <Route path="/recommended" element={<Recommendations />} />
         <Route path="/login" element={<LoginForm setToken={setToken} />} />
         <Route path="/" element={<Authors show={true} />} />
       </Routes>

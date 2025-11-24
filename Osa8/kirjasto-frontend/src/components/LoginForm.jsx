@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useMutation } from '@apollo/client/react'
+import { useMutation, useApolloClient } from '@apollo/client/react'
 import { LOGIN } from '../queries'
 
 const LoginForm = ({ setToken }) => {
+  
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
+  const client = useApolloClient()
   const [ login, result ] = useMutation(LOGIN)
 
 
@@ -14,6 +15,7 @@ const LoginForm = ({ setToken }) => {
       const token = result.data.login.value
       setToken(token)
       localStorage.setItem('library-user-token', token)
+      client.resetStore() //restore store to refetch queries with new token
     }
   }, [result.data])
 
