@@ -4,7 +4,18 @@ import App from "./App.jsx";
 
 import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client/react'
+import { setContext } from '@apollo/client/link/context'
 import { BrowserRouter as Router } from 'react-router-dom'
+
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('library-user-token')
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : null,
+    }
+  }
+})
 
 // backend
 const httpLink = createHttpLink({
@@ -12,7 +23,7 @@ const httpLink = createHttpLink({
 })
 
 const client = new ApolloClient({
-  link: httpLink,
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 })
 

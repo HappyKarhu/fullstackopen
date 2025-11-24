@@ -8,7 +8,7 @@ const Authors = (props) => {
   
   //fetch authors from GraphQL server
   const result = useQuery(ALL_AUTHORS)
-  const [setAuthor] = useMutation(SET_AUTHOR, { refetchQueries: [{ query: ALL_AUTHORS }],
+  const [setAuthor] = useMutation(SET_AUTHOR, { refetchQueries: [{ query: ALL_AUTHORS }]
   })
 
   if (!props.show) {return null}
