@@ -12,12 +12,16 @@ export const ALL_AUTHORS = gql`
 }
 `
 
-//author=book object
+//author=book object -for 8.17 here is mistake
 export const ALL_BOOKS = gql`
   query {
     allBooks {
     title
-    author
+    author {
+      name
+      id
+    }
+    genres
     published
     id
   }
