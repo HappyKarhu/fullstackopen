@@ -10,11 +10,19 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@apollo/server": "^5.1.0",
+    "@apollo/server": "^5.2.0",
+    "@as-integrations/express5": "^1.1.2",
+    "@graphql-tools/schema": "^10.0.29",
     "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "express": "^5.1.0",
     "graphql": "^16.12.0",
+    "graphql-subscriptions": "^3.0.0",
+    "graphql-ws": "^6.0.6",
+    "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.20.0"
+    "mongoose": "^8.20.1",
+    "ws": "^8.18.3"
   }
 }
