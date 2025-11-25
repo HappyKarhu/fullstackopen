@@ -75,7 +75,7 @@ export const LOGIN = gql`
   }
 `
 
-//genre
+//by genre
 export const ME = gql`
   query {
     me {
