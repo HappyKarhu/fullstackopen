@@ -7,7 +7,7 @@ import Recommendations from "./components/Recommendations"
 import { useState } from "react";
 import { useApolloClient } from "@apollo/client/react";
 import { useSubscription } from "@apollo/client/react";
-import { BOOK_ADDED } from "./queries";
+import { BOOK_ADDED, ALL_BOOKS } from "./queries";
 
 
 const App = () => {
@@ -24,13 +24,31 @@ const App = () => {
     client.resetStore();
     navigate("/"); 
   };
+
+  const updateCache = (cache, query, addedBook) => {
+    const uniqById = (a) => {
+      const seen = new Set()
+      return a.filter(item => {
+        const key = item.id
+        return seen.has(key) ? false : seen.add(key)
+      })
+    }
+
+  cache.updateQuery(query, (data) => {
+    if (!data) return
+    return {
+      allBooks: uniqById(data.allBooks.concat(addedBook))
+    }
+  })
+}
   //subscription for new book added
   useSubscription(BOOK_ADDED, {
-  onData: ({ data }) => {
-    const addedBook = data.data.bookAdded
-    window.alert(`New book added: ${addedBook.title} by ${addedBook.author.name}`)
-  },
-})
+    onData: ({ data }) => {
+        const addedBook = data.data.bookAdded;
+        window.alert(`New book added: ${addedBook.title} by ${addedBook.author.name}`);
+        updateCache(client.cache, { query: ALL_BOOKS }, addedBook);
+      },
+    })
 
  //navigation menu and routes
   return (
