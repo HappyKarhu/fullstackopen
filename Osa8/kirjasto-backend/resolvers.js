@@ -25,12 +25,12 @@ module.exports = (pubsub) => ({
       return Book.find(filter).populate('author')
     },
 
-    allAuthors: async () => Author.find({}),
+    allAuthors: async () => Author.find({}).populate('books'),
     me: (root, args, context) => context.currentUser
   },
 
   Author: {
-    bookCount: async (root) => Book.countDocuments({ author: root._id })
+    bookCount: async (root) => root.books.length
   },
 
   Mutation: {
@@ -55,6 +55,11 @@ module.exports = (pubsub) => ({
       })
 
       await book.save()
+
+      //push book ID into author
+      author.books = author.books.concat(book._id)
+      await author.save()
+      
       await book.populate('author')
 
       pubsub.publish('BOOK_ADDED', { bookAdded: book })
