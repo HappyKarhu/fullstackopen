@@ -44,6 +44,27 @@ export const calculateExercises = (dailyExercises: number[], target: number): Ex
   };
 };
 
-console.log(
-  calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2)
-);
+const parseArguments = (args: string[]): { dailyExercises: number[], target: number } => {
+  if (args.length < 4) throw new Error('Not enough arguments');
+
+  const numberArgs = args.slice(2).map(arg => Number(arg));
+    if (numberArgs.some(isNaN)) {
+      throw new Error('Provided values were not numbers!');
+    }
+  const target = numberArgs[0];
+  const dailyExercises = numberArgs.slice(1); 
+  return { dailyExercises, target };
+}
+
+//run the program with command line arguments
+try {
+  const { dailyExercises, target } = parseArguments(process.argv);
+  const result=(calculateExercises(dailyExercises, target));
+  console.log(result);
+} catch (error: unknown) {
+  let errorMessage = 'Something went wrong.';
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message;
+  }
+  console.log(errorMessage);
+}
