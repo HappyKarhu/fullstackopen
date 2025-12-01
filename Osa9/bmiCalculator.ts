@@ -1,4 +1,4 @@
-const calculateBmi = (heightInCm: number, weightKg: number): string => {
+export const calculateBmi = (heightInCm: number, weightKg: number): string => {
   const heightInM = heightInCm / 100;
   const bmi = weightKg / (heightInM * heightInM);
 
@@ -22,23 +22,22 @@ const calculateBmi = (heightInCm: number, weightKg: number): string => {
 }
 
 //command line arguments processing
+if (require.main === module) {
 const parseArguments = (args: string[]): { height: number; weight: number } => {
   if (args.length < 4) throw new Error('Not enough arguments, please provide exactly 2 arguments: height (cm) and weight (kg)');
-
   const height = Number(args[2]);
   const weight = Number(args[3]);
   if (isNaN(height) || isNaN(weight)) throw new Error('Provided values were not numbers!');
-
   return { height, weight };
 }
+
 //run the program with command line arguments
 try {
   const { height, weight } = parseArguments(process.argv);
   console.log(calculateBmi(height, weight));
 } catch (error: unknown) {
-  let errorMessage = 'Something went wrong.';
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
+    let errorMessage = 'Something went wrong.';
+    if (error instanceof Error) errorMessage += ' Error: ' + error.message;
+    console.log(errorMessage);
   }
-  console.log(errorMessage);
 }
