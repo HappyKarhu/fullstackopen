@@ -54,7 +54,7 @@ const parseArguments = (args: string[]): { dailyExercises: number[], target: num
   const target = numberArgs[0];
   const dailyExercises = numberArgs.slice(1); 
   return { dailyExercises, target };
-}
+};
 
 //run the program with command line arguments
 try {

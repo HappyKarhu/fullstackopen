@@ -19,7 +19,7 @@ export const calculateBmi = (heightInCm: number, weightKg: number): string => {
   } else {
     return 'Obese (Class III)';
   }
-}
+};
 
 //command line arguments processing
 if (require.main === module) {
@@ -29,7 +29,7 @@ const parseArguments = (args: string[]): { height: number; weight: number } => {
   const weight = Number(args[3]);
   if (isNaN(height) || isNaN(weight)) throw new Error('Provided values were not numbers!');
   return { height, weight };
-}
+};
 
 //run the program with command line arguments
 try {
