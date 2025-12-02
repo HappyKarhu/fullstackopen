@@ -6,7 +6,7 @@ const PORT = 3000;
 
 app.get('/api/ping', (_req, res) => {
   console.log('someone pinged here');
-  res.send('pong');
+  res.send('pong.');
 });
 
 app.get('/api/patients', (_req, res) => {
