@@ -40,6 +40,7 @@
     //"noUncheckedSideEffectImports": true,
     //"moduleDetection": "force",
     //"skipLibCheck": true,
-    "esModuleInterop": true //allows interoperability between CommonJS and ES Modules
+    "esModuleInterop": true, //allows interoperability between CommonJS and ES Modules
+    "resolveJsonModule": true //allows importing JSON files as modules
   }
 }
