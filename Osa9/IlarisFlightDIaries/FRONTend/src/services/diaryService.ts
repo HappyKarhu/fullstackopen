@@ -1,17 +1,14 @@
+import axios from 'axios';
 import type { NonSensitiveDiaryEntry, NewDiaryEntry } from "../types";
+
 
 const baseUrl = "/api/diaries";
 
 export const getAllDiaries = async (): Promise<NonSensitiveDiaryEntry[]> => {
-  const response = await fetch(baseUrl);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch diaries");
-  }
-
-  const data: NonSensitiveDiaryEntry[] = await response.json();
-  return data;
+  const response = await axios.get<NonSensitiveDiaryEntry[]>(baseUrl);
+  return response.data;
 };
+
 
 //to add Diary
 export const createDiary = async (diary: NewDiaryEntry): Promise<NonSensitiveDiaryEntry> => {

@@ -27,16 +27,26 @@ function App() {
     setNewDiary({ ...newDiary, [event.target.name]: event.target.value });
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const [error, setError] = useState<string | null>(null);
+
+const handleSubmit = async (event: React.FormEvent) => {
+  event.preventDefault();
+  try {
     const addedDiary = await createDiary(newDiary);
     setDiaries([...diaries, addedDiary]);
-    setNewDiary({ date: '', weather: '', visibility: '', comment: '' });
-  };
+    setNewDiary({ date: "", weather: "", visibility: "", comment: "" });
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      setError(e.message);
+      setTimeout(() => setError(null), 3000);
+    }
+  }
+};
 
   return (
       <div>
         <h2>Add new entry</h2>
+        {error && <p style={{ color: "red" }}>{error}</p>}
         <form onSubmit={handleSubmit}>
         <input
           type="text" //date is automaticlly calendar format if text would be text
