@@ -12,18 +12,19 @@ export const getAllDiaries = async (): Promise<NonSensitiveDiaryEntry[]> => {
 
 //to add Diary
 export const createDiary = async (diary: NewDiaryEntry): Promise<NonSensitiveDiaryEntry> => {
-  const response = await fetch(baseUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(diary),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create diary");
+    try {
+    const response = await axios.post<NonSensitiveDiaryEntry>(baseUrl, diary, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error) && error.response) {
+      // Backend sent an error message
+      throw new Error(error.response.data?.error || "Failed to create diary");
+    } else {
+      throw new Error("Failed to create diary");
+    }
   }
-
-  const data: NonSensitiveDiaryEntry = await response.json();
-  return data;
 };
