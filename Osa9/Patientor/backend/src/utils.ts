@@ -12,4 +12,4 @@ const newPatientEntrySchema = z.object({
 
 export const toNewPatientEntry = (object: unknown): AddPatientEntry => {
     return newPatientEntrySchema.parse(object);
-}
+};
