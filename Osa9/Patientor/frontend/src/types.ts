@@ -36,7 +36,7 @@ export enum HealthCheckRating {
 
 export interface HealthCheckEntry extends BaseEntry {
   type: "HealthCheck";
-  healthCheckRating: number;
+  healthCheckRating: HealthCheckRating;
 }
 
 export interface HospitalEntry extends BaseEntry {

@@ -7,6 +7,7 @@ import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 import { Gender, Patient, Diagnosis } from "../types";
+import EntryDetails from "./EntryDetails";
 
 
 interface Props {
@@ -60,8 +61,7 @@ const PatientPage: React.FC<Props> = ({ diagnoses }) => {
       {patient.entries?.map(entry => (
         <Card key={entry.id} sx={{ mb: 2 }}>
           <CardContent>
-            <Typography variant="h6">{entry.date}</Typography>
-            <Typography>{entry.description}</Typography>
+            <EntryDetails entry={entry} />
             {entry.diagnosisCodes && (
                 <ul>
                   {entry.diagnosisCodes.map(code => {

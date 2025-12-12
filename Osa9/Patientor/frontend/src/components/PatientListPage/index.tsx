@@ -4,9 +4,7 @@ import axios from 'axios';
 import { Link as RouterLink } from "react-router-dom";
 import { PatientFormValues, Patient } from "../../types";
 import AddPatientModal from "../AddPatientModal";
-
 import HealthRatingBar from "../HealthRatingBar";
-
 import patientService from "../../services/patients";
 
 interface Props {
